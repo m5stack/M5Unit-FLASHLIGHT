@@ -37,7 +37,9 @@ public:
         portENABLE_INTERRUPTS();
 #endif
     }
-    InterruptGuard(const InterruptGuard&)            = delete;
+
+    InterruptGuard(const InterruptGuard&) = delete;
+
     InterruptGuard& operator=(const InterruptGuard&) = delete;
 };
 
