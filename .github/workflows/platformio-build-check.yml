@@ -1,0 +1,118 @@
+name: Build(platformio)
+
+on:
+  push:
+    tags-ignore:
+      - '*.*.*'
+      - 'v*.*.*'
+    branches:
+      - '*'
+    paths:
+      - 'src/**.cpp'
+      - 'src/**.hpp'
+      - 'src/**.h'
+      - 'src/**.c'
+      - 'examples/UnitUnified/**.ino'
+      - 'examples/UnitUnified/**.cpp'
+      - 'examples/UnitUnified/**.hpp'
+      - 'examples/UnitUnified/**.h'
+      - 'examples/UnitUnified/**.c'
+      - '.github/workflows/platformio-build-check.yml'
+      - 'platformio.ini'
+  pull_request:
+    paths:
+      - 'src/**.cpp'
+      - 'src/**.hpp'
+      - 'src/**.h'
+      - 'src/**.c'
+      - 'examples/UnitUnified/**.ino'
+      - 'examples/UnitUnified/**.cpp'
+      - 'examples/UnitUnified/**.hpp'
+      - 'examples/UnitUnified/**.h'
+      - 'examples/UnitUnified/**.c'
+      - '.github/workflows/platformio-build-check.yml'
+      - 'platformio.ini'
+  workflow_dispatch:
+
+defaults:
+  run:
+    shell: bash
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: ${{ matrix.unit }}:${{ matrix.example }}@${{ matrix.board }}:${{ matrix.framework }}:${{ matrix.espressif32 }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+
+    strategy:
+      fail-fast: false
+      max-parallel: 20
+
+      matrix:
+        example:
+          - FlashDemo
+
+        unit:
+          - UnitFlashLight
+
+        board:
+          - Core
+          - Core2
+          - CoreS3
+          - Fire
+          - StampS3
+          - Dial
+          - Atom
+          - AtomS3
+          - AtomS3R
+          - NanoC6
+          - StickCPlus
+          - StickCPlus2
+          - StickS3
+          - Paper
+          - CoreInk
+          - Cardputer
+          - Tab5
+          - NessoN1
+
+        framework:
+          - Arduino
+
+        espressif32:
+          - latest
+
+        # Single Core build with -DUSE_TORCH_DEMO to compile-check the torch path.
+        include:
+          - unit: UnitFlashLight
+            example: TorchDemo
+            board: Core
+            framework: Arduino
+            espressif32: latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Install intelhex
+        run: pip install intelhex
+
+      - name: Build examples
+        uses: karniv00l/platformio-run-action@v1
+        with:
+          environments: ${{ format('{0}_{1}_{2}_{3}_{4}', matrix.unit, matrix.example, matrix.board, matrix.framework, matrix.espressif32) }}
+#         targets:
+          project-dir: "./"
+          project-conf: "./platformio.ini"
+#          jobs: 6
+#          silent: false
+#          verbose: true
+#          disable-auto-clean: false

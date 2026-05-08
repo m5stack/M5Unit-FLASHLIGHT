@@ -1,0 +1,156 @@
+name: Build(arduino-m5stack)
+
+env:
+  SKETCH_NAMES_FIND_START: ./examples/UnitUnified
+  REQUIRED_LIBRARIES: M5Unified,M5UnitUnified
+
+on:
+  push:
+    tags-ignore:
+      - '*.*.*'
+      - 'v*.*.*'
+    branches:
+      - '*'
+    paths:
+      - 'src/**.cpp'
+      - 'src/**.hpp'
+      - 'src/**.h'
+      - 'src/**.c'
+      - 'examples/UnitUnified/**.ino'
+      - 'examples/UnitUnified/**.cpp'
+      - 'examples/UnitUnified/**.hpp'
+      - 'examples/UnitUnified/**.h'
+      - 'examples/UnitUnified/**.c'
+      - '.github/workflows/arduino-m5-build-check.yml'
+  pull_request:
+    paths:
+      - 'src/**.cpp'
+      - 'src/**.hpp'
+      - 'src/**.h'
+      - 'src/**.c'
+      - 'examples/UnitUnified/**.ino'
+      - 'examples/UnitUnified/**.cpp'
+      - 'examples/UnitUnified/**.hpp'
+      - 'examples/UnitUnified/**.h'
+      - 'examples/UnitUnified/**.c'
+      - '.github/workflows/arduino-m5-build-check.yml'
+  workflow_dispatch:
+
+defaults:
+  run:
+    shell: bash
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: ${{ matrix.unit }}:${{ matrix.sketch }}:${{ matrix.board }}@${{ matrix.platform-version }}${{ matrix.variant && format(' ({0})', matrix.variant) || '' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+
+    strategy:
+      fail-fast: false
+      max-parallel: 20
+      matrix:
+        platform-url:
+          - https://m5stack.oss-cn-shenzhen.aliyuncs.com/resource/arduino/package_m5stack_index.json
+
+        unit:
+          - UnitFlashLight
+
+        sketch:
+          - FlashDemo
+
+        board:
+          - arduino_nesso_n1
+          - m5stack_atom
+          - m5stack_atoms3
+          - m5stack_atoms3r
+          - m5stack_capsule
+          - m5stack_cardputer
+          - m5stack_core
+          - m5stack_core2
+          - m5stack_coreink
+          - m5stack_cores3
+          - m5stack_dial
+          - m5stack_dinmeter
+          - m5stack_fire
+          - m5stack_nano_c6
+          - m5stack_paper
+          - m5stack_papers3
+          - m5stack_stamp_s3
+          - m5stack_stickc
+          - m5stack_stickc_plus
+          - m5stack_stickc_plus2
+          - m5stack_sticks3
+          - m5stack_tab5
+
+        platform-version:
+          - 3.2.5
+
+        platform:
+          - m5stack
+
+        archi:
+          - esp32
+
+        variant:
+          - ""
+
+        # Single Core build with -DUSE_TORCH_DEMO to compile-check the torch path.
+        include:
+          - platform-url: https://m5stack.oss-cn-shenzhen.aliyuncs.com/resource/arduino/package_m5stack_index.json
+            unit: UnitFlashLight
+            sketch: FlashDemo
+            board: m5stack_core
+            platform-version: 3.2.5
+            platform: m5stack
+            archi: esp32
+            variant: torch
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Prepare libraries list
+        id: libs
+        run: |
+          {
+            echo "yaml<<EOF"
+            echo "$REQUIRED_LIBRARIES" | tr ',' '\n' | while read -r lib; do
+              echo "- name: $lib"
+            done
+            echo "- source-path: ./"
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Compile examples
+        if: matrix.variant == ''
+        uses: arduino/compile-sketches@v1
+        with:
+          fqbn: ${{ matrix.platform }}:${{ matrix.archi }}:${{ matrix.board }}
+          platforms: |
+            - name: ${{ matrix.platform }}:${{ matrix.archi }}
+              source-url: ${{ matrix.platform-url }}
+              version: ${{ matrix.platform-version }}
+          libraries: ${{ steps.libs.outputs.yaml }}
+          sketch-paths: |
+            - ${{ env.SKETCH_NAMES_FIND_START }}/${{ matrix.unit }}/${{ matrix.sketch }}
+
+      - name: Compile examples (torch variant)
+        if: matrix.variant == 'torch'
+        uses: arduino/compile-sketches@v1
+        with:
+          fqbn: ${{ matrix.platform }}:${{ matrix.archi }}:${{ matrix.board }}
+          cli-compile-flags: |
+            - --build-property
+            - compiler.cpp.extra_flags=-DUSE_TORCH_DEMO
+          platforms: |
+            - name: ${{ matrix.platform }}:${{ matrix.archi }}
+              source-url: ${{ matrix.platform-url }}
+              version: ${{ matrix.platform-version }}
+          libraries: ${{ steps.libs.outputs.yaml }}
+          sketch-paths: |
+            - ${{ env.SKETCH_NAMES_FIND_START }}/${{ matrix.unit }}/${{ matrix.sketch }}
