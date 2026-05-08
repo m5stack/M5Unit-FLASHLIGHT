@@ -1,4 +1,4 @@
-# M5Unit-FlashLight
+# M5Unit-FLASHLIGHT
 
 ## Overview
 
@@ -12,7 +12,7 @@ Unit FlashLight is an output unit with a built-in flashlight, containing an AW36
 
 ## License
 
-- [M5Unit-FlashLight  - MIT](LICENSE)
+- [M5Unit-FlashLight - MIT](LICENSE)
 
 ---
 
