@@ -4,7 +4,7 @@
 
 ### SKU:U152
 
-Unit FlashLight is an output unit with a built-in flashlight, containing an AW3641 driver and a white LED with a color temperature of 5000 ~ 5700K. There is a mode selection switch on the internal PCB that allows you to choose between flash mode and constant light mode, using a GPIO input interface. It can be used as a flash source or for lighting applications.
+Unit FlashLight is an output unit with a built-in flashlight, containing an AW3641E driver and a white LED with a color temperature of 5000 ~ 5700K. There is a mode selection switch on the internal PCB that allows you to choose between flash mode and constant light mode, using a GPIO input interface. It can be used as a flash source or for lighting applications.
 
 ## Related Link
 
@@ -55,6 +55,21 @@ on the PCB before powering the unit:
 ### Examples
 See also [examples/UnitUnified](examples/UnitUnified)
 
+### For Arduino IDE settings
+`FlashDemo` runs in one of two modes (Flash / Torch). Choose the mode by
+uncommenting the corresponding `#define` in the sketch, or by passing it
+as a compile option. The physical `S1` switch on the PCB must be set to
+match the selected mode.
+
+- FlashDemo
+```cpp
+// *************************************************************
+// Default: Flash mode (S1 = Flash side).
+// Uncomment to run the Torch demo instead (S1 = Torch side).
+// *************************************************************
+// #define USE_TORCH_DEMO
+```
+
 ### Doxygen document
 [GitHub Pages](https://m5stack.github.io/M5Unit-FLASHLIGHT/)
 
@@ -69,5 +84,4 @@ If you want to output Git commit hashes to html, do it for the git cloned folder
 
 #### Required
 - [Doxygen](https://www.doxygen.nl/)
-- [pcregrep](https://formulae.brew.sh/formula/pcre2)
 - [Git](https://git-scm.com/) (Output commit hash to html)
