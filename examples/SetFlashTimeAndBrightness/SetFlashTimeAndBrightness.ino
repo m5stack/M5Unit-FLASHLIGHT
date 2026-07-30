@@ -8,7 +8,8 @@ M5Canvas canvas(&display);
 
 uint8_t flash_brightness_time = 0;
 
-void unit_flash_init(void) {
+void unit_flash_init(void)
+{
     pinMode(FLASH_EN_PIN, OUTPUT);
     digitalWrite(FLASH_EN_PIN, LOW);
 }
@@ -30,7 +31,8 @@ void unit_flash_init(void) {
 // 14: 50% brightness + 1.3s
 // 15: 40% brightness + 1.3s
 // 16: 30% brightness + 1.3s
-void unit_flash_set_brightness(uint8_t brightness) {
+void unit_flash_set_brightness(uint8_t brightness)
+{
     if ((brightness >= 1) && (brightness <= 16)) {
         for (int i = 0; i < brightness; i++) {
             digitalWrite(FLASH_EN_PIN, LOW);
@@ -43,7 +45,8 @@ void unit_flash_set_brightness(uint8_t brightness) {
     }
 }
 
-void setup() {
+void setup()
+{
     M5.begin(true, false, true, true);
     display.begin();
     canvas.setTextDatum(MC_DATUM);
@@ -55,7 +58,8 @@ void setup() {
     unit_flash_init();
 }
 
-void loop() {
+void loop()
+{
     canvas.fillSprite(BLACK);
     canvas.setTextSize(2);
     canvas.setTextColor(ORANGE);
