@@ -27,7 +27,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">M5Unit-FLASHLIGHT<span id="projectnumber">&#160;0.0.1 git rev:9a14869</span>
+   <div id="projectname">M5Unit-FLASHLIGHT<span id="projectnumber">&#160;0.0.2 git rev:4071dde</span>
    </div>
   </td>
  </tr>
@@ -340,7 +340,7 @@ constexpr uint32_t&#160;</td><td class="memItemRight" valign="bottom"><b>m5::uni
 </div><div class="memdoc">
 
 <p>Maximum duration for a single torch() call in milliseconds. </p>
-<dl class="section note"><dt>Note</dt><dd>Library-side safety cap. Torch mode itself has no hardware time limit (EN=HIGH continuously drives ~214 mA), but the driver clamps long durations to avoid runaway on-time bugs. </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Library-side safety cap — but auto-shutdown at this duration still requires the caller to run Units.update() periodically. Torch mode itself has no hardware time limit (EN=HIGH continuously drives ~214 mA); the driver clamps the requested duration but cannot enforce it without update() calls. Use stop() for guaranteed cutoff. </dd></dl>
 
 </div>
 </div>

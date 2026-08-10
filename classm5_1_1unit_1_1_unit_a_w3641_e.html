@@ -27,7 +27,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">M5Unit-FLASHLIGHT<span id="projectnumber">&#160;0.0.1 git rev:9a14869</span>
+   <div id="projectname">M5Unit-FLASHLIGHT<span id="projectnumber">&#160;0.0.2 git rev:4071dde</span>
    </div>
   </td>
  </tr>
@@ -174,15 +174,15 @@ Protected Attributes</h2></td></tr>
 <tr class="memitem:ad6a8610bf7b1f455556173c287534a08" id="r_ad6a8610bf7b1f455556173c287534a08"><td class="memItemLeft" align="right" valign="top"><a id="ad6a8610bf7b1f455556173c287534a08" name="ad6a8610bf7b1f455556173c287534a08"></a>
 <a class="el" href="structm5_1_1unit_1_1_unit_a_w3641_e_1_1config__t.html">config_t</a>&#160;</td><td class="memItemRight" valign="bottom"><b>_cfg</b> {}</td></tr>
 <tr class="separator:ad6a8610bf7b1f455556173c287534a08"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6280d0e555aa951895c5fa937cdef6c0" id="r_a6280d0e555aa951895c5fa937cdef6c0"><td class="memItemLeft" align="right" valign="top"><a id="a6280d0e555aa951895c5fa937cdef6c0" name="a6280d0e555aa951895c5fa937cdef6c0"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><b>_flash_active</b> {false}</td></tr>
-<tr class="separator:a6280d0e555aa951895c5fa937cdef6c0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4c2f65e96bac8df43e8fcbf1e9db2075" id="r_a4c2f65e96bac8df43e8fcbf1e9db2075"><td class="memItemLeft" align="right" valign="top"><a id="a4c2f65e96bac8df43e8fcbf1e9db2075" name="a4c2f65e96bac8df43e8fcbf1e9db2075"></a>
-uint32_t&#160;</td><td class="memItemRight" valign="bottom"><b>_flash_start_ms</b> {0}</td></tr>
-<tr class="separator:a4c2f65e96bac8df43e8fcbf1e9db2075"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5eaabff6f4ca6b55d6accd4544d36ccc" id="r_a5eaabff6f4ca6b55d6accd4544d36ccc"><td class="memItemLeft" align="right" valign="top"><a id="a5eaabff6f4ca6b55d6accd4544d36ccc" name="a5eaabff6f4ca6b55d6accd4544d36ccc"></a>
-uint16_t&#160;</td><td class="memItemRight" valign="bottom"><b>_flash_duration_ms</b> {0}</td></tr>
-<tr class="separator:a5eaabff6f4ca6b55d6accd4544d36ccc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a12e3644434b8c926fa6d9f322e42b00e" id="r_a12e3644434b8c926fa6d9f322e42b00e"><td class="memItemLeft" align="right" valign="top"><a id="a12e3644434b8c926fa6d9f322e42b00e" name="a12e3644434b8c926fa6d9f322e42b00e"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>_active</b> {false}</td></tr>
+<tr class="separator:a12e3644434b8c926fa6d9f322e42b00e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac7113e44797548aa47e7ac0174dfa59f" id="r_ac7113e44797548aa47e7ac0174dfa59f"><td class="memItemLeft" align="right" valign="top"><a id="ac7113e44797548aa47e7ac0174dfa59f" name="ac7113e44797548aa47e7ac0174dfa59f"></a>
+uint32_t&#160;</td><td class="memItemRight" valign="bottom"><b>_start_ms</b> {0}</td></tr>
+<tr class="separator:ac7113e44797548aa47e7ac0174dfa59f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2d803ad49593d054a455867c031a50cb" id="r_a2d803ad49593d054a455867c031a50cb"><td class="memItemLeft" align="right" valign="top"><a id="a2d803ad49593d054a455867c031a50cb" name="a2d803ad49593d054a455867c031a50cb"></a>
+uint16_t&#160;</td><td class="memItemRight" valign="bottom"><b>_duration_ms</b> {0}</td></tr>
+<tr class="separator:a2d803ad49593d054a455867c031a50cb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>1A flash LED driver controlled via EN-pin pulse protocol </p>
@@ -372,7 +372,7 @@ Torch mode (S1 = Torch side): use <a class="el" href="#a2b80022618f4134797cd9223
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>True on success. False if <a class="el" href="structm5_1_1unit_1_1_unit_a_w3641_e_1_1config__t.html#aae5efb676ba7d7194f4c82bda9657e0b" title="Declaration of the physical S1 switch position. The driver cannot detect S1 at runtime; it trusts thi...">config_t::switch_position</a> is not Flash (logs error), if duration_ms is 0, or if the GPIO write fails. </dd></dl>
-<dl class="section note"><dt>Note</dt><dd>Always auto-off: <a class="el" href="#a8f872fd1f38f907603685dd2f212b50b" title="Drive EN LOW automatically when the flash/torch duration has elapsed.">update()</a> drives EN LOW after duration_ms elapses. If a previous flash/torch is still <a class="el" href="#a1a82ec3ee70488d8ba345a8fa18befdf" title="Is a flash or torch currently in progress?">active()</a>, it is cancelled and the new flash starts after T_OFF (&gt;500 µs). </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Auto-off depends on periodic Units.update() calls — <a class="el" href="#a8f872fd1f38f907603685dd2f212b50b" title="Drive EN LOW automatically when the flash/torch duration has elapsed.">update()</a> drives EN LOW after duration_ms elapses. The AW3641E also enforces a 220 ms hardware timeout in Flash mode, so the LED turns off even if <a class="el" href="#a8f872fd1f38f907603685dd2f212b50b" title="Drive EN LOW automatically when the flash/torch duration has elapsed.">update()</a> is missed; however, <a class="el" href="#a1a82ec3ee70488d8ba345a8fa18befdf" title="Is a flash or torch currently in progress?">active()</a> remains true until <a class="el" href="#a8f872fd1f38f907603685dd2f212b50b" title="Drive EN LOW automatically when the flash/torch duration has elapsed.">update()</a> runs. If a previous flash/torch is still <a class="el" href="#a1a82ec3ee70488d8ba345a8fa18befdf" title="Is a flash or torch currently in progress?">active()</a>, it is cancelled and the new flash starts after T_OFF (&gt;500 µs). </dd></dl>
 <dl class="section warning"><dt>Warning</dt><dd>Requires <a class="el" href="structm5_1_1unit_1_1_unit_a_w3641_e_1_1config__t.html#aae5efb676ba7d7194f4c82bda9657e0b" title="Declaration of the physical S1 switch position. The driver cannot detect S1 at runtime; it trusts thi...">config_t::switch_position</a> == SwitchPosition::Flash to match the physical S1 switch. </dd></dl>
 
 </div>
@@ -482,7 +482,7 @@ Torch mode (S1 = Torch side): use <a class="el" href="#a2b80022618f4134797cd9223
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>True on success. False if <a class="el" href="structm5_1_1unit_1_1_unit_a_w3641_e_1_1config__t.html#aae5efb676ba7d7194f4c82bda9657e0b" title="Declaration of the physical S1 switch position. The driver cannot detect S1 at runtime; it trusts thi...">config_t::switch_position</a> is not Torch (logs error), if duration_ms is 0, or if the GPIO write fails. </dd></dl>
-<dl class="section note"><dt>Note</dt><dd>Always auto-off: <a class="el" href="#a8f872fd1f38f907603685dd2f212b50b" title="Drive EN LOW automatically when the flash/torch duration has elapsed.">update()</a> drives EN LOW after duration_ms elapses. If a previous flash/torch is still <a class="el" href="#a1a82ec3ee70488d8ba345a8fa18befdf" title="Is a flash or torch currently in progress?">active()</a>, it is cancelled and the new torch starts. Torch current is fixed at approximately 214 mA; brightness is not adjustable. </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Auto-off is COOPERATIVE — <a class="el" href="#a8f872fd1f38f907603685dd2f212b50b" title="Drive EN LOW automatically when the flash/torch duration has elapsed.">update()</a> drives EN LOW after duration_ms only when the caller runs Units.update() (typically once per loop()). Torch mode has NO hardware timeout: if <a class="el" href="#a8f872fd1f38f907603685dd2f212b50b" title="Drive EN LOW automatically when the flash/torch duration has elapsed.">update()</a> stops being called (blocked task, long delay(), etc.), the LED stays on continuously at ~214 mA until <a class="el" href="#acf7bee408c3a66796bbe0fc3f01ec47f" title="Stop any in-flight flash or torch (drives EN LOW immediately)">stop()</a> is called or power is removed. Call <a class="el" href="#acf7bee408c3a66796bbe0fc3f01ec47f" title="Stop any in-flight flash or torch (drives EN LOW immediately)">stop()</a> explicitly for hard cutoff. If a previous flash/torch is still <a class="el" href="#a1a82ec3ee70488d8ba345a8fa18befdf" title="Is a flash or torch currently in progress?">active()</a>, it is cancelled and the new torch starts. Torch current is fixed at approximately 214 mA; brightness is not adjustable. </dd></dl>
 <dl class="section warning"><dt>Warning</dt><dd>Requires <a class="el" href="structm5_1_1unit_1_1_unit_a_w3641_e_1_1config__t.html#aae5efb676ba7d7194f4c82bda9657e0b" title="Declaration of the physical S1 switch position. The driver cannot detect S1 at runtime; it trusts thi...">config_t::switch_position</a> == SwitchPosition::Torch to match the physical S1 switch. </dd></dl>
 
 </div>
