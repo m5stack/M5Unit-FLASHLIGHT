@@ -19,6 +19,11 @@ using namespace m5::unit::aw3641e;
 
 class TestAW3641E : public GPIOComponentTestBase<UnitAW3641E> {
 protected:
+    // Override to match UnitAW3641E's TX-only nature (EN pin only, no RX).
+    bool begin() override
+    {
+        return m5::unit::wiring::addGPIO(Units, *unit, m5::unit::wiring::GpioRole::OutOnly) && Units.begin();
+    }
     virtual UnitAW3641E* get_instance() override
     {
         return new m5::unit::UnitAW3641E();
@@ -27,6 +32,10 @@ protected:
 
 class TestAW3641EAsTorch : public GPIOComponentTestBase<UnitAW3641E> {
 protected:
+    bool begin() override
+    {
+        return m5::unit::wiring::addGPIO(Units, *unit, m5::unit::wiring::GpioRole::OutOnly) && Units.begin();
+    }
     virtual UnitAW3641E* get_instance() override
     {
         auto* u             = new m5::unit::UnitAW3641E();
