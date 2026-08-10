@@ -180,15 +180,23 @@ bool UnitAW3641E::send_pulse_train(const uint8_t pulse_count)
 
     // 2. Send the rising-edge pulse train with interrupts disabled.
     //    Final state is EN = HIGH, which latches the setting and triggers the flash.
+    //    Keep writing across a failure so pulse timing stays intact; report at the end.
+    bool ok{true};
     {
         // cppcheck-suppress unusedVariable
         InterruptGuard guard;
         for (uint8_t i = 0; i < pulse_count; ++i) {
-            writeDigitalTX(false);
+            ok = writeDigitalTX(false) && ok;
             m5::utility::delayMicroseconds(PULSE_LOW_US);
-            writeDigitalTX(true);
+            ok = writeDigitalTX(true) && ok;
             m5::utility::delayMicroseconds(PULSE_HIGH_US);
         }
+    }
+    if (!ok) {
+        // Drop EN LOW so we do not leave the chip latched HIGH on a partial train.
+        writeDigitalTX(false);
+        M5_LIB_LOGE("send_pulse_train: writeDigitalTX failed inside pulse loop");
+        return false;
     }
     return true;
 }
