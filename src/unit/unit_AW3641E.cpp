@@ -21,26 +21,32 @@ using namespace m5::unit::aw3641e;
 
 namespace {
 
-// Scoped interrupt-disable guard for the pulse train (ESP32/FreeRTOS only).
+// Scoped critical section guard for the pulse train (ESP32/FreeRTOS only).
+// Uses a spinlock so nested critical sections and SMP cores are handled correctly,
+// and prior interrupt state is preserved on exit.
 // Keeps T_HI/T_LO jitter under the 10 us upper bound even across task switches.
 class InterruptGuard {
 public:
     InterruptGuard()
     {
 #if defined(ARDUINO_ARCH_ESP32) || defined(ESP_PLATFORM)
-        portDISABLE_INTERRUPTS();
+        portENTER_CRITICAL(&_mux);
 #endif
     }
     ~InterruptGuard()
     {
 #if defined(ARDUINO_ARCH_ESP32) || defined(ESP_PLATFORM)
-        portENABLE_INTERRUPTS();
+        portEXIT_CRITICAL(&_mux);
 #endif
     }
 
-    InterruptGuard(const InterruptGuard&) = delete;
-
+    InterruptGuard(const InterruptGuard&)            = delete;
     InterruptGuard& operator=(const InterruptGuard&) = delete;
+
+private:
+#if defined(ARDUINO_ARCH_ESP32) || defined(ESP_PLATFORM)
+    portMUX_TYPE _mux = portMUX_INITIALIZER_UNLOCKED;
+#endif
 };
 
 }  // namespace
