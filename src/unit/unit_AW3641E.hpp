@@ -69,9 +69,11 @@ constexpr uint32_t PULSE_OFF_US{600};
 constexpr uint16_t FLASH_MAX_DURATION_MS{220};
 
 //! @brief Maximum duration for a single torch() call in milliseconds
-//! @note Library-side safety cap. Torch mode itself has no hardware time limit
-//!       (EN=HIGH continuously drives ~214 mA), but the driver clamps long
-//!       durations to avoid runaway on-time bugs.
+//! @note Library-side safety cap — but auto-shutdown at this duration still
+//!       requires the caller to run Units.update() periodically. Torch mode
+//!       itself has no hardware time limit (EN=HIGH continuously drives ~214 mA);
+//!       the driver clamps the requested duration but cannot enforce it without
+//!       update() calls. Use stop() for guaranteed cutoff.
 constexpr uint16_t TORCH_MAX_DURATION_MS{1300};
 
 /*!
@@ -173,7 +175,10 @@ public:
       @return True on success.
               False if config_t::switch_position is not Flash (logs error),
               if duration_ms is 0, or if the GPIO write fails.
-      @note Always auto-off: update() drives EN LOW after duration_ms elapses.
+      @note Auto-off depends on periodic Units.update() calls — update() drives EN LOW
+            after duration_ms elapses. The AW3641E also enforces a 220 ms hardware
+            timeout in Flash mode, so the LED turns off even if update() is missed;
+            however, active() remains true until update() runs.
             If a previous flash/torch is still active(), it is cancelled and
             the new flash starts after T_OFF (>500 µs).
       @warning Requires config_t::switch_position == SwitchPosition::Flash to match
@@ -190,7 +195,11 @@ public:
       @return True on success.
               False if config_t::switch_position is not Torch (logs error),
               if duration_ms is 0, or if the GPIO write fails.
-      @note Always auto-off: update() drives EN LOW after duration_ms elapses.
+      @note Auto-off is COOPERATIVE — update() drives EN LOW after duration_ms only
+            when the caller runs Units.update() (typically once per loop()). Torch mode
+            has NO hardware timeout: if update() stops being called (blocked task,
+            long delay(), etc.), the LED stays on continuously at ~214 mA until stop()
+            is called or power is removed. Call stop() explicitly for hard cutoff.
             If a previous flash/torch is still active(), it is cancelled and
             the new torch starts.
             Torch current is fixed at approximately 214 mA; brightness is not
@@ -207,13 +216,13 @@ public:
     //! @return Duration in milliseconds (after clamping); 0 if no operation has been issued yet
     inline uint16_t lastDurationMs() const
     {
-        return _flash_duration_ms;
+        return _duration_ms;
     }
     //! @brief Is a flash or torch currently in progress?
     //! @return True while update() is still waiting to drive EN LOW
     inline bool active() const
     {
-        return _flash_active;
+        return _active;
     }
     ///@}
 
@@ -225,10 +234,10 @@ protected:
 
 protected:
     config_t _cfg{};
-    // Flash timing tracker for non-blocking auto-shutdown in update().
-    bool _flash_active{false};
-    uint32_t _flash_start_ms{0};
-    uint16_t _flash_duration_ms{0};
+    // Flash/torch timing tracker for non-blocking auto-shutdown in update().
+    bool _active{false};
+    uint32_t _start_ms{0};
+    uint16_t _duration_ms{0};
 };
 
 }  // namespace unit

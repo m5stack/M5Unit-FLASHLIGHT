@@ -24,6 +24,7 @@
 #include <M5Unified.h>
 #include <M5UnitUnified.h>
 #include <M5UnitUnifiedFLASHLIGHT.h>
+#include <wiring/m5_unit_unified_wiring.hpp>
 
 using namespace m5::unit::aw3641e;
 
@@ -45,26 +46,6 @@ constexpr uint16_t DURATION_MAX_MS{FLASH_MAX_DURATION_MS};
 #endif
 constexpr uint16_t DURATION_MIN_MS{10};
 uint16_t current_duration_ms{DURATION_MAX_MS};
-
-struct IoPins {
-    int rx;
-    int tx;
-};
-
-IoPins get_gpio_pins()
-{
-    // Port.B on M5Core family (Core / Core2 / CoreS3 / Fire / Paper)
-    auto rx{M5.getPin(m5::pin_name_t::port_b_in)};
-    auto tx{M5.getPin(m5::pin_name_t::port_b_out)};
-    if (rx >= 0 && tx >= 0) {
-        return {rx, tx};
-    }
-    // Fallback to Port.A (StickC / Atom / Stamp / NanoC6 etc.)
-    // FlashLight only needs the Yellow wire; map it to port_a_sda as TX.
-    rx = M5.getPin(m5::pin_name_t::port_a_scl);
-    tx = M5.getPin(m5::pin_name_t::port_a_sda);
-    return {rx, tx};
-}
 
 unsigned brightness_percent(const Brightness b)
 {
@@ -142,24 +123,10 @@ void setup()
 #endif
     unit.config(cfg);
 
-    const auto pins{get_gpio_pins()};
-    M5.Log.printf("FlashLight pins: RX=%d TX=%d\n", pins.rx, pins.tx);
-    if (pins.rx < 0 || pins.tx < 0) {
-        M5_LOGE("No GPIO pins available for this board (%u)", static_cast<unsigned>(M5.getBoard()));
-        lcd.fillScreen(TFT_RED);
-        while (true) {
-            M5.update();
-            m5::utility::delay(100);
-        }
-    }
-
-    if (!Units.add(unit, pins.rx, pins.tx) || !Units.begin()) {
+    // FlashLight is TX-only (EN pin); use OutOnly so the adapter does not claim RX.
+    if (!m5::unit::wiring::addGPIO(Units, unit, m5::unit::wiring::GpioRole::OutOnly) || !Units.begin()) {
         M5_LOGE("Failed to begin");
-        lcd.fillScreen(TFT_RED);
-        while (true) {
-            M5.update();
-            m5::utility::delay(100);
-        }
+        m5::unit::wiring::failStop();
     }
 
     M5.Log.printf("%s\n", Units.debugInfo().c_str());

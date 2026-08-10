@@ -21,26 +21,32 @@ using namespace m5::unit::aw3641e;
 
 namespace {
 
-// Scoped interrupt-disable guard for the pulse train (ESP32/FreeRTOS only).
+// Scoped critical section guard for the pulse train (ESP32/FreeRTOS only).
+// Uses a spinlock so nested critical sections and SMP cores are handled correctly,
+// and prior interrupt state is preserved on exit.
 // Keeps T_HI/T_LO jitter under the 10 us upper bound even across task switches.
 class InterruptGuard {
 public:
     InterruptGuard()
     {
 #if defined(ARDUINO_ARCH_ESP32) || defined(ESP_PLATFORM)
-        portDISABLE_INTERRUPTS();
+        portENTER_CRITICAL(&_mux);
 #endif
     }
     ~InterruptGuard()
     {
 #if defined(ARDUINO_ARCH_ESP32) || defined(ESP_PLATFORM)
-        portENABLE_INTERRUPTS();
+        portEXIT_CRITICAL(&_mux);
 #endif
     }
 
     InterruptGuard(const InterruptGuard&) = delete;
-
     InterruptGuard& operator=(const InterruptGuard&) = delete;
+
+private:
+#if defined(ARDUINO_ARCH_ESP32) || defined(ESP_PLATFORM)
+    portMUX_TYPE _mux = portMUX_INITIALIZER_UNLOCKED;
+#endif
 };
 
 }  // namespace
@@ -72,21 +78,21 @@ bool UnitAW3641E::begin()
         return false;
     }
 
-    _flash_active      = false;
-    _flash_start_ms    = 0;
-    _flash_duration_ms = 0;
+    _active      = false;
+    _start_ms    = 0;
+    _duration_ms = 0;
     return true;
 }
 
 void UnitAW3641E::update(const bool /*force*/)
 {
-    if (!_flash_active) {
+    if (!_active) {
         return;
     }
     const uint32_t now{m5::utility::millis()};
-    if (static_cast<uint32_t>(now - _flash_start_ms) >= _flash_duration_ms) {
+    if (static_cast<uint32_t>(now - _start_ms) >= _duration_ms) {
         if (writeDigitalTX(false)) {
-            _flash_active = false;
+            _active = false;
         }
     }
 }
@@ -96,7 +102,7 @@ bool UnitAW3641E::stop()
     if (!writeDigitalTX(false)) {
         return false;
     }
-    _flash_active = false;
+    _active = false;
     return true;
 }
 
@@ -122,16 +128,16 @@ bool UnitAW3641E::flash(const aw3641e::Brightness brightness, const uint16_t dur
     // Cancel any in-flight flash/torch before starting a new one.
     // send_pulse_train() also drives EN LOW + waits T_OFF (>500 us) at its start,
     // satisfying the chip's latch-reset requirement automatically.
-    _flash_active = false;
+    _active = false;
 
     const uint8_t n{to_pulse_count(brightness)};
     if (!send_pulse_train(n)) {
         return false;
     }
     // EN is held HIGH after the pulse train; update() drives EN LOW after duration_ms.
-    _flash_duration_ms = effective_ms;
-    _flash_start_ms    = m5::utility::millis();
-    _flash_active      = true;
+    _duration_ms = effective_ms;
+    _start_ms    = m5::utility::millis();
+    _active      = true;
     return true;
 }
 
@@ -155,7 +161,7 @@ bool UnitAW3641E::torch(const uint16_t duration_ms)
     }
 
     // Cancel any in-flight operation by toggling EN low briefly, then high.
-    _flash_active = false;
+    _active = false;
     if (!writeDigitalTX(false)) {
         return false;
     }
@@ -164,9 +170,9 @@ bool UnitAW3641E::torch(const uint16_t duration_ms)
         return false;
     }
 
-    _flash_duration_ms = effective_ms;
-    _flash_start_ms    = m5::utility::millis();
-    _flash_active      = true;
+    _duration_ms = effective_ms;
+    _start_ms    = m5::utility::millis();
+    _active      = true;
     return true;
 }
 
@@ -180,15 +186,23 @@ bool UnitAW3641E::send_pulse_train(const uint8_t pulse_count)
 
     // 2. Send the rising-edge pulse train with interrupts disabled.
     //    Final state is EN = HIGH, which latches the setting and triggers the flash.
+    //    Keep writing across a failure so pulse timing stays intact; report at the end.
+    bool ok{true};
     {
         // cppcheck-suppress unusedVariable
         InterruptGuard guard;
         for (uint8_t i = 0; i < pulse_count; ++i) {
-            writeDigitalTX(false);
+            ok = writeDigitalTX(false) && ok;
             m5::utility::delayMicroseconds(PULSE_LOW_US);
-            writeDigitalTX(true);
+            ok = writeDigitalTX(true) && ok;
             m5::utility::delayMicroseconds(PULSE_HIGH_US);
         }
+    }
+    if (!ok) {
+        // Drop EN LOW so we do not leave the chip latched HIGH on a partial train.
+        writeDigitalTX(false);
+        M5_LIB_LOGE("send_pulse_train: writeDigitalTX failed inside pulse loop");
+        return false;
     }
     return true;
 }

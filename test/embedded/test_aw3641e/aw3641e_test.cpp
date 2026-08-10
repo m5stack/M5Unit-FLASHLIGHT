@@ -19,6 +19,11 @@ using namespace m5::unit::aw3641e;
 
 class TestAW3641E : public GPIOComponentTestBase<UnitAW3641E> {
 protected:
+    // Override to match UnitAW3641E's TX-only nature (EN pin only, no RX).
+    bool begin() override
+    {
+        return m5::unit::wiring::addGPIO(Units, *unit, m5::unit::wiring::GpioRole::OutOnly) && Units.begin();
+    }
     virtual UnitAW3641E* get_instance() override
     {
         return new m5::unit::UnitAW3641E();
@@ -27,6 +32,10 @@ protected:
 
 class TestAW3641EAsTorch : public GPIOComponentTestBase<UnitAW3641E> {
 protected:
+    bool begin() override
+    {
+        return m5::unit::wiring::addGPIO(Units, *unit, m5::unit::wiring::GpioRole::OutOnly) && Units.begin();
+    }
     virtual UnitAW3641E* get_instance() override
     {
         auto* u             = new m5::unit::UnitAW3641E();
@@ -72,6 +81,7 @@ TEST(AW3641E, DurationConstants)
 TEST(AW3641E, PulseTimingConstants)
 {
     // T_HI/T_LO must be within the AW3641E datasheet budget (0.75..10 us).
+    // Lower bound relaxed to 1 us because constexpr uint32_t cannot express 0.75.
     EXPECT_GE(PULSE_HIGH_US, 1u);
     EXPECT_LE(PULSE_HIGH_US, 10u);
     EXPECT_GE(PULSE_LOW_US, 1u);
