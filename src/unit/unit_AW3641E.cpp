@@ -40,7 +40,7 @@ public:
 #endif
     }
 
-    InterruptGuard(const InterruptGuard&)            = delete;
+    InterruptGuard(const InterruptGuard&) = delete;
     InterruptGuard& operator=(const InterruptGuard&) = delete;
 
 private:
