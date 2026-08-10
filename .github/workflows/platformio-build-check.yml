@@ -59,26 +59,32 @@ jobs:
         unit:
           - UnitFlashLight
 
+        # Reduced to compile-config representatives (SoC x Arduino platform).
+        # AW3641E is a GPIO 1-wire driver with minimal board-specific variance;
+        # the active boards below cover all SoC + platform combinations used
+        # in the library. Commented boards are covered by env in platformio.ini
+        # for local `pio run -e ...`; re-enable in CI if a board-specific
+        # regression appears.
         board:
-          - Core
-          - Core2
-          - CoreS3
-          - Fire
-          - StampS3
-          - Dial
-          - Atom
-          - AtomS3
-          - AtomS3R
-          - NanoC6
-          - NanoH2
-          - StickCPlus
-          - StickCPlus2
-          - StickS3
-          - Paper
-          - CoreInk
-          - Cardputer
-          - Tab5
-          - NessoN1
+          - Core          # espressif32 x ESP32 (Xtensa dual)
+#          - Core2
+          - CoreS3        # espressif32 x ESP32-S3 (Xtensa dual + PSRAM + USB-OTG)
+#          - Fire
+#          - StampS3
+#          - Dial
+#          - Atom
+#          - AtomS3
+#          - AtomS3R
+          - NanoC6        # pioarduino x ESP32-C6 (RISC-V)
+          - NanoH2        # pioarduino x ESP32-H2 (RISC-V, lowest clock)
+#          - StickCPlus
+          - StickCPlus2   # custom board json + variant override
+#          - StickS3
+#          - Paper
+#          - CoreInk
+#          - Cardputer
+          - Tab5          # pioarduino x ESP32-P4 (RISC-V + non-standard partition)
+          - NessoN1       # non-M5 form factor (Arduino UNO compatible)
 
         framework:
           - Arduino
