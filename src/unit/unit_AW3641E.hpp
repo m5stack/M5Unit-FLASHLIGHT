@@ -216,13 +216,13 @@ public:
     //! @return Duration in milliseconds (after clamping); 0 if no operation has been issued yet
     inline uint16_t lastDurationMs() const
     {
-        return _flash_duration_ms;
+        return _duration_ms;
     }
     //! @brief Is a flash or torch currently in progress?
     //! @return True while update() is still waiting to drive EN LOW
     inline bool active() const
     {
-        return _flash_active;
+        return _active;
     }
     ///@}
 
@@ -234,10 +234,10 @@ protected:
 
 protected:
     config_t _cfg{};
-    // Flash timing tracker for non-blocking auto-shutdown in update().
-    bool _flash_active{false};
-    uint32_t _flash_start_ms{0};
-    uint16_t _flash_duration_ms{0};
+    // Flash/torch timing tracker for non-blocking auto-shutdown in update().
+    bool _active{false};
+    uint32_t _start_ms{0};
+    uint16_t _duration_ms{0};
 };
 
 }  // namespace unit
