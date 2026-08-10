@@ -72,6 +72,7 @@ TEST(AW3641E, DurationConstants)
 TEST(AW3641E, PulseTimingConstants)
 {
     // T_HI/T_LO must be within the AW3641E datasheet budget (0.75..10 us).
+    // Lower bound relaxed to 1 us because constexpr uint32_t cannot express 0.75.
     EXPECT_GE(PULSE_HIGH_US, 1u);
     EXPECT_LE(PULSE_HIGH_US, 10u);
     EXPECT_GE(PULSE_LOW_US, 1u);
