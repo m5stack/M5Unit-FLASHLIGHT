@@ -70,6 +70,20 @@ match the selected mode.
 // #define USE_TORCH_DEMO
 ```
 
+### For ESP-IDF settings
+
+> **NOTE:** The ESP-IDF native build (`idf.py`) targets ESP-IDF **5.1 or later** (5.x and 6.x).
+
+The example needs no Kconfig choice. Build it directly:
+
+```sh
+cd examples/UnitUnified/UnitFlashLight/FlashDemo
+idf.py set-target esp32s3               # or esp32 / esp32c5 / esp32c6 / esp32h2 / esp32p4 / ...
+idf.py build flash monitor
+```
+
+To run the Torch demo, uncomment `#define USE_TORCH_DEMO` in `main/FlashDemo.cpp` (same as for Arduino IDE).
+
 ### Doxygen document
 [GitHub Pages](https://m5stack.github.io/M5Unit-FLASHLIGHT/)
 
