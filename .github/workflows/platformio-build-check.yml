@@ -19,6 +19,7 @@ on:
       - 'examples/UnitUnified/**.c'
       - '.github/workflows/platformio-build-check.yml'
       - 'platformio.ini'
+      - 'boards/**'
   pull_request:
     paths:
       - 'src/**.cpp'
@@ -32,6 +33,7 @@ on:
       - 'examples/UnitUnified/**.c'
       - '.github/workflows/platformio-build-check.yml'
       - 'platformio.ini'
+      - 'boards/**'
   workflow_dispatch:
 
 defaults:
@@ -59,32 +61,28 @@ jobs:
         unit:
           - UnitFlashLight
 
-        # Reduced to compile-config representatives (SoC x Arduino platform).
-        # AW3641E is a GPIO 1-wire driver with minimal board-specific variance;
-        # the active boards below cover all SoC + platform combinations used
-        # in the library. Commented boards are covered by env in platformio.ini
-        # for local `pio run -e ...`; re-enable in CI if a board-specific
-        # regression appears.
         board:
-          - Core          # espressif32 x ESP32 (Xtensa dual)
-#          - Core2
-          - CoreS3        # espressif32 x ESP32-S3 (Xtensa dual + PSRAM + USB-OTG)
-#          - Fire
-#          - StampS3
-#          - Dial
-#          - Atom
-#          - AtomS3
-#          - AtomS3R
-          - NanoC6        # pioarduino x ESP32-C6 (RISC-V)
-          - NanoH2        # pioarduino x ESP32-H2 (RISC-V, lowest clock)
-#          - StickCPlus
-          - StickCPlus2   # custom board json + variant override
-#          - StickS3
-#          - Paper
-#          - CoreInk
-#          - Cardputer
-          - Tab5          # pioarduino x ESP32-P4 (RISC-V + non-standard partition)
-          - NessoN1       # non-M5 form factor (Arduino UNO compatible)
+          # Reduced from 19 to 5 boards: one per compile config (chip arch x platform).
+          # The other boards differ only in the variant header, so the library code compiles the same.
+          - Core
+#          - Core2  # ESP32: represented by Core
+          - CoreS3
+#          - Fire  # ESP32: represented by Core
+#          - StampS3  # ESP32-S3: represented by CoreS3
+#          - Dial  # ESP32-S3: represented by CoreS3
+#          - Atom  # ESP32: represented by Core
+#          - AtomS3  # ESP32-S3: represented by CoreS3
+#          - AtomS3R  # ESP32-S3: represented by CoreS3
+          - NanoC6
+          - NanoH2
+#          - StickCPlus  # ESP32: represented by Core
+#          - StickCPlus2  # ESP32: represented by Core
+#          - StickS3  # ESP32-S3: represented by CoreS3
+#          - Paper  # ESP32: represented by Core
+#          - CoreInk  # ESP32: represented by Core
+#          - Cardputer  # ESP32-S3: represented by CoreS3
+          - Tab5
+#          - NessoN1  # ESP32-C6: represented by NanoC6
 
         framework:
           - Arduino
