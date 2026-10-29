@@ -56,16 +56,16 @@ enum class Brightness : uint8_t {
     Pct30,   //!< 30% of I_FLASH
 };
 
-//! @brief Minimum logic-high pulse width in microseconds (T_HI; datasheet 0.75-10 µs)
+//! @brief Logic-high pulse width in microseconds (T_HI; datasheet range 0.75-10 µs)
 constexpr uint32_t PULSE_HIGH_US{4};
-//! @brief Minimum logic-low pulse width in microseconds (T_LO; datasheet 0.75-10 µs)
+//! @brief Logic-low pulse width in microseconds (T_LO; datasheet range 0.75-10 µs)
 constexpr uint32_t PULSE_LOW_US{4};
-//! @brief Minimum EN-low delay required before a pulse sequence (T_OFF; datasheet > 500 µs)
+//! @brief EN-low time before a pulse sequence in microseconds (T_OFF; datasheet > 500 µs)
 constexpr uint32_t PULSE_OFF_US{600};
 
 //! @brief Maximum duration for a single flash() call in milliseconds
-//! @note Matches the AW3641E Flash mode hardware timeout for Pulse 1-8 (220 ms).
-//!       For longer continuous on-time use torch() instead.
+//! @note Matches the AW3641E Flash mode hardware timeout for Pulse 1-8
+//!       (T_FLASH typ 220 ms, 180-310 ms). For longer continuous on-time use torch() instead.
 constexpr uint16_t FLASH_MAX_DURATION_MS{220};
 
 //! @brief Default torch() duration in milliseconds (used when torch() is called with no argument)
@@ -80,7 +80,7 @@ constexpr uint32_t TORCH_DEFAULT_DURATION_MS{1300};
   @brief Translate a Brightness level to the AW3641E rising-edge pulse count
   @param b Brightness level
   @return Pulse count in range 1..8 (Pulse 1 = 100% / 220 ms, Pulse 8 = 30% / 220 ms)
-  @note Only Pulse 1-8 (Ms220 timeout) is exposed by this library; the chip's
+  @note Only Pulse 1-8 (220 ms hardware timeout) is exposed by this library; the chip's
         Pulse 9-16 (1.3 s timeout) range is not used because thermal protection
         causes the LED to dim before the timeout expires at higher currents.
  */
@@ -105,8 +105,8 @@ constexpr uint8_t to_pulse_count(const Brightness b)
            current.
   @warning Torch mode (S1 = Torch side): use torch() for steady ~214 mA illumination for a
            given time, or torchOn() to keep it on until stop(). Calling torch() while S1
-           is on the Flash side will fire the LED briefly (~220 ms) and then dim due to
-           Flash-mode thermal protection.
+           is on the Flash side will fire the LED briefly and then turn it off by the
+           Flash-mode timeout (T_FLASH 180-310 ms).
   @note    If observed behavior does not match the API, power down the unit and toggle
            the physical switch on the PCB before retrying. config_t::switch_position
            must match the physical switch.
@@ -140,14 +140,14 @@ public:
     //! @return True if successful
     virtual bool begin() override;
     //! @brief Drive EN LOW automatically when the flash/torch duration has elapsed
-    //! @param force Currently ignored (kept for API symmetry)
+    //! @param force Ignored
     virtual void update(const bool force = false) override;
 
     ///@name Settings for begin
     ///@{
     //! @brief Gets the configuration
     //! @return Current configuration
-    inline config_t config()
+    inline config_t config() const
     {
         return _cfg;
     }
@@ -177,9 +177,10 @@ public:
               False if config_t::switch_position is not Flash (logs error),
               if duration_ms is 0, or if the GPIO write fails.
       @note Auto-off depends on periodic Units.update() calls — update() drives EN LOW
-            after duration_ms elapses. The AW3641E also enforces a 220 ms hardware
-            timeout in Flash mode, so the LED turns off even if update() is missed;
-            however, active() remains true until update() runs.
+            after duration_ms elapses. The AW3641E also enforces a hardware timeout in
+            Flash mode (T_FLASH typ 220 ms, 180-310 ms), so the LED turns off even if update()
+            is missed; with duration_ms of 180-220 ms the hardware may turn it off first.
+            However, active() remains true until update() runs.
             If a previous flash/torch is still active(), it is cancelled and
             the new flash starts after T_OFF (>500 µs).
       @warning Requires config_t::switch_position == SwitchPosition::Flash to match
@@ -243,9 +244,9 @@ public:
     ///@}
 
 protected:
-    //! @brief Send a 1-wire EN pulse train of the given count (1..8 for Brightness Pct100..Pct30)
-    //! @param pulse_count Number of rising edges (1..8). Final state is EN = HIGH.
-    //! @return True if the GPIO writes succeeded.
+    // @brief Send a 1-wire EN pulse train of the given count (1..8 for Brightness Pct100..Pct30)
+    // @param pulse_count Number of rising edges (1..8). Final state is EN = HIGH.
+    // @return True if the GPIO writes succeeded.
     bool send_pulse_train(const uint8_t pulse_count);
     // Cancel any in-flight operation (EN LOW for T_OFF), then drive EN HIGH in Torch mode.
     bool start_torch();
