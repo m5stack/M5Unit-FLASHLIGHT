@@ -106,8 +106,8 @@ constexpr uint8_t to_pulse_count(const Brightness b)
            metered flash; the LED will simply turn on continuously at the chip's Torch
            current.
   @warning Torch mode (S1 = Torch side): use torch() for steady ~214 mA illumination for a
-           given time, or torchOn() to keep it on until stop(). Calling torch() while S1
-           is on the Flash side fires a 100% flash, and after the Flash-mode timeout
+           given time, or torchOn() to keep it on until stop(). Calling torch() or torchOn()
+           while S1 is on the Flash side fires a 100% flash, and after the Flash-mode timeout
            (T_FLASH 180-310 ms) the LED stays on at a lower current until EN goes LOW.
   @note    If observed behavior does not match the API, power down the unit and toggle
            the physical switch on the PCB before retrying. config_t::switch_position
