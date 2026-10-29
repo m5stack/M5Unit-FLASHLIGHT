@@ -73,7 +73,8 @@ constexpr uint16_t FLASH_MAX_DURATION_MS{220};
 //!       and ~214 mA is within the chip's continuous rating (0.4 A).
 //!       Use torchOn() to keep the LED on until stop().
 constexpr uint32_t TORCH_DEFAULT_DURATION_MS{1300};
-//! @brief Deprecated alias for TORCH_DEFAULT_DURATION_MS (torch() no longer clamps the duration)
+//! @brief Alias for TORCH_DEFAULT_DURATION_MS (torch() does not clamp the duration; this is only the default)
+//! @deprecated Use TORCH_DEFAULT_DURATION_MS instead
 [[deprecated("Use TORCH_DEFAULT_DURATION_MS instead")]] constexpr uint16_t TORCH_MAX_DURATION_MS{1300};
 
 /*!
@@ -139,7 +140,7 @@ public:
     //! @brief Begin the unit (configures EN as OUTPUT and drives EN LOW)
     //! @return True if successful
     virtual bool begin() override;
-    //! @brief Drive EN LOW automatically when the flash/torch duration has elapsed
+    //! @brief Drive EN LOW automatically when the flash/torch duration has elapsed (not for torchOn())
     //! @param force Ignored
     virtual void update(const bool force = false) override;
 
@@ -217,7 +218,7 @@ public:
               or if the GPIO write fails.
       @note The LED stays on at ~214 mA; update() does not turn it off. Call stop() to turn it off.
             Calling torchOn() while the LED is already on keeps it on without a break and returns
-            true; a timed torch() in progress is no longer turned off by update().
+            true; for a timed torch() in progress, its timed turn-off is cancelled.
             Long continuous operation heats the LED; check the temperature for your use case.
       @warning Requires config_t::switch_position == SwitchPosition::Torch to match
                the physical S1 switch.
@@ -235,7 +236,7 @@ public:
         return _duration_ms;
     }
     //! @brief Is a flash or torch currently in progress?
-    //! @return True while the LED is driven on (until update() turns it off after the duration,
+    //! @return True while EN is driven HIGH (until update() drives it LOW after the duration,
     //!         or stop() is called)
     inline bool active() const
     {
