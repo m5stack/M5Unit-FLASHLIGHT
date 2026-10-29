@@ -25,6 +25,14 @@ protected:
     {
         return m5::unit::wiring::addGPIO(Units, *unit, m5::unit::wiring::GpioRole::OutOnly) && Units.begin();
     }
+    // Turn the LED off even if a test fails while it is on
+    void TearDown() override
+    {
+        if (unit) {
+            unit->stop();
+        }
+        GPIOComponentTestBase<UnitAW3641E>::TearDown();
+    }
 };
 
 class TestAW3641E : public TestAW3641EBase {
@@ -47,7 +55,7 @@ protected:
     }
 };
 
-// --- HW-in-loop tests (require GPIO adapter to be wired to U152) ---
+// --- GPIO tests (the unit on the port only makes the light observable; the state checks do not need it) ---
 
 TEST_F(TestAW3641E, Instance)
 {
@@ -106,6 +114,7 @@ TEST_F(TestAW3641E, FlashDurationClamp)
 
     // duration > FLASH_MAX_DURATION_MS is clamped
     EXPECT_TRUE(unit->flash(Brightness::Pct100, FLASH_MAX_DURATION_MS + 500));
+    EXPECT_TRUE(unit->active());
     EXPECT_EQ(unit->lastDurationMs(), FLASH_MAX_DURATION_MS);
     EXPECT_TRUE(unit->stop());
 }
@@ -267,7 +276,7 @@ TEST_F(TestAW3641EAsTorch, TorchLongDurationNotClamped)
 {
     SCOPED_TRACE(ustr);
 
-    constexpr uint32_t long_ms{60000};  // Longer than uint16_t-era 1300 ms cap
+    constexpr uint32_t long_ms{60000};  // Well above TORCH_DEFAULT_DURATION_MS; torch() does not clamp
     EXPECT_TRUE(unit->torch(long_ms));
     EXPECT_EQ(unit->lastDurationMs(), long_ms);
     unit->update();
