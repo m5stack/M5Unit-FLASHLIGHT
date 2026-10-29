@@ -41,6 +41,14 @@ TEST(AW3641E, ConfigRoundTrip)
     EXPECT_EQ(unit.config().switch_position, SwitchPosition::Torch);
 }
 
+TEST(AW3641E, BeginFailsWithoutGPIOAdapter)
+{
+    // Not added to UnitUnified, so the unit keeps its default (non-GPIO) adapter
+    UnitAW3641E unit{};
+    EXPECT_FALSE(unit.begin());
+    EXPECT_FALSE(unit.active());
+}
+
 TEST(AW3641E, DurationConstants)
 {
     EXPECT_EQ(FLASH_MAX_DURATION_MS, 220u);
