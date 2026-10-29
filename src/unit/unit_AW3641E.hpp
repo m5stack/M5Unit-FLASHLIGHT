@@ -68,13 +68,13 @@ constexpr uint32_t PULSE_OFF_US{600};
 //!       For longer continuous on-time use torch() instead.
 constexpr uint16_t FLASH_MAX_DURATION_MS{220};
 
-//! @brief Maximum duration for a single torch() call in milliseconds
-//! @note Library-side safety cap — but auto-shutdown at this duration still
-//!       requires the caller to run Units.update() periodically. Torch mode
-//!       itself has no hardware time limit (EN=HIGH continuously drives ~214 mA);
-//!       the driver clamps the requested duration but cannot enforce it without
-//!       update() calls. Use stop() for guaranteed cutoff.
-constexpr uint16_t TORCH_MAX_DURATION_MS{1300};
+//! @brief Default torch() duration in milliseconds (used when torch() is called with no argument)
+//! @note A value chosen by this library, not a chip limit: Torch mode has no hardware timeout
+//!       and ~214 mA is within the chip's continuous rating (0.4 A).
+//!       Use torchOn() to keep the LED on until stop().
+constexpr uint32_t TORCH_DEFAULT_DURATION_MS{1300};
+//! @brief Deprecated alias for TORCH_DEFAULT_DURATION_MS (torch() no longer clamps the duration)
+[[deprecated("Use TORCH_DEFAULT_DURATION_MS instead")]] constexpr uint16_t TORCH_MAX_DURATION_MS{1300};
 
 /*!
   @brief Translate a Brightness level to the AW3641E rising-edge pulse count
@@ -103,9 +103,10 @@ constexpr uint8_t to_pulse_count(const Brightness b)
            (<= 220 ms). Calling flash() while S1 is on the Torch side does NOT produce a
            metered flash; the LED will simply turn on continuously at the chip's Torch
            current.
-  @warning Torch mode (S1 = Torch side): use torch() for steady ~214 mA illumination
-           (<= 1.3 s). Calling torch() while S1 is on the Flash side will fire the LED
-           briefly (~220 ms) and then dim due to Flash-mode thermal protection.
+  @warning Torch mode (S1 = Torch side): use torch() for steady ~214 mA illumination for a
+           given time, or torchOn() to keep it on until stop(). Calling torch() while S1
+           is on the Flash side will fire the LED briefly (~220 ms) and then dim due to
+           Flash-mode thermal protection.
   @note    If observed behavior does not match the API, power down the unit and toggle
            the physical switch on the PCB before retrying. config_t::switch_position
            must match the physical switch.
@@ -161,7 +162,7 @@ public:
     ///@name Operation control
     ///@{
     /*!
-      @brief Stop any in-flight flash or torch (drives EN LOW immediately)
+      @brief Stop any in-flight flash or torch, including torchOn() (drives EN LOW immediately)
       @return True if the GPIO write succeeded; safe to call when idle (no-op success)
      */
     bool stop();
@@ -188,9 +189,8 @@ public:
                const uint16_t duration_ms           = aw3641e::FLASH_MAX_DURATION_MS);
 
     /*!
-      @brief Drive the LED continuously in Torch mode for up to TORCH_MAX_DURATION_MS
-      @param duration_ms Torch duration in milliseconds (default 1300).
-             Clamped to TORCH_MAX_DURATION_MS (1300 ms) with a warning if exceeded.
+      @brief Drive the LED in Torch mode for the given duration
+      @param duration_ms Torch duration in milliseconds (default TORCH_DEFAULT_DURATION_MS = 1300).
              A value of 0 returns false without driving the pin.
       @return True on success.
               False if config_t::switch_position is not Torch (logs error),
@@ -207,19 +207,35 @@ public:
       @warning Requires config_t::switch_position == SwitchPosition::Torch to match
                the physical S1 switch.
      */
-    bool torch(const uint16_t duration_ms = aw3641e::TORCH_MAX_DURATION_MS);
+    bool torch(const uint32_t duration_ms = aw3641e::TORCH_DEFAULT_DURATION_MS);
+
+    /*!
+      @brief Turn the LED on in Torch mode until stop() is called
+      @return True on success.
+              False if config_t::switch_position is not Torch (logs error),
+              or if the GPIO write fails.
+      @note The LED stays on at ~214 mA; update() does not turn it off. Call stop() to turn it off.
+            Calling torchOn() while the LED is already on keeps it on without a break and returns
+            true; a timed torch() in progress is no longer turned off by update().
+            Long continuous operation heats the LED; check the temperature for your use case.
+      @warning Requires config_t::switch_position == SwitchPosition::Torch to match
+               the physical S1 switch.
+     */
+    bool torchOn();
     ///@}
 
     ///@name Status accessors
     ///@{
-    //! @brief Last applied on-duration in milliseconds (clamped value used for flash() or torch())
-    //! @return Duration in milliseconds (after clamping); 0 if no operation has been issued yet
-    inline uint16_t lastDurationMs() const
+    //! @brief Last applied on-duration in milliseconds (value used for flash() or torch())
+    //! @return Duration in milliseconds (after clamping for flash());
+    //!         0 if no operation has been issued yet or after torchOn()
+    inline uint32_t lastDurationMs() const
     {
         return _duration_ms;
     }
     //! @brief Is a flash or torch currently in progress?
-    //! @return True while update() is still waiting to drive EN LOW
+    //! @return True while the LED is driven on (until update() turns it off after the duration,
+    //!         or stop() is called)
     inline bool active() const
     {
         return _active;
@@ -231,13 +247,16 @@ protected:
     //! @param pulse_count Number of rising edges (1..8). Final state is EN = HIGH.
     //! @return True if the GPIO writes succeeded.
     bool send_pulse_train(const uint8_t pulse_count);
+    // Cancel any in-flight operation (EN LOW for T_OFF), then drive EN HIGH in Torch mode.
+    bool start_torch();
 
 protected:
     config_t _cfg{};
     // Flash/torch timing tracker for non-blocking auto-shutdown in update().
     bool _active{false};
-    uint32_t _start_ms{0};
-    uint16_t _duration_ms{0};
+    bool _continuous{false};  // torchOn(): update() does not turn the LED off
+    types::elapsed_time_t _start_ms{0};
+    uint32_t _duration_ms{0};
 };
 
 }  // namespace unit

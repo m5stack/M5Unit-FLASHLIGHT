@@ -74,8 +74,8 @@ TEST(AW3641E, ConfigDefaults)
 TEST(AW3641E, DurationConstants)
 {
     EXPECT_EQ(FLASH_MAX_DURATION_MS, 220u);
-    EXPECT_EQ(TORCH_MAX_DURATION_MS, 1300u);
-    EXPECT_LT(FLASH_MAX_DURATION_MS, TORCH_MAX_DURATION_MS);
+    EXPECT_EQ(TORCH_DEFAULT_DURATION_MS, 1300u);
+    EXPECT_LT(FLASH_MAX_DURATION_MS, TORCH_DEFAULT_DURATION_MS);
 }
 
 TEST(AW3641E, PulseTimingConstants)
@@ -232,6 +232,14 @@ TEST_F(TestAW3641E, StopWhenIdleIsNoOpSuccess)
     EXPECT_FALSE(unit->active());
 }
 
+TEST_F(TestAW3641E, TorchOnRejectedInFlashPosition)
+{
+    SCOPED_TRACE(ustr);
+
+    EXPECT_FALSE(unit->torchOn());
+    EXPECT_FALSE(unit->active());
+}
+
 // --- Torch fixture (config: switch_position = Torch) ---
 
 TEST_F(TestAW3641EAsTorch, TorchInitialState)
@@ -258,9 +266,10 @@ TEST_F(TestAW3641EAsTorch, TorchWithDefaults)
 {
     SCOPED_TRACE(ustr);
 
-    // torch() with no arg defaults to TORCH_MAX_DURATION_MS
+    // torch() with no arg defaults to TORCH_DEFAULT_DURATION_MS
     EXPECT_TRUE(unit->torch());
-    EXPECT_EQ(unit->lastDurationMs(), TORCH_MAX_DURATION_MS);
+    EXPECT_TRUE(unit->active());
+    EXPECT_EQ(unit->lastDurationMs(), TORCH_DEFAULT_DURATION_MS);
     EXPECT_TRUE(unit->stop());
 }
 
@@ -272,13 +281,75 @@ TEST_F(TestAW3641EAsTorch, TorchRejectsZeroDuration)
     EXPECT_FALSE(unit->active());
 }
 
-TEST_F(TestAW3641EAsTorch, TorchDurationClamp)
+TEST_F(TestAW3641EAsTorch, TorchLongDurationNotClamped)
 {
     SCOPED_TRACE(ustr);
 
-    EXPECT_TRUE(unit->torch(TORCH_MAX_DURATION_MS + 500));
-    EXPECT_EQ(unit->lastDurationMs(), TORCH_MAX_DURATION_MS);
+    constexpr uint32_t long_ms{60000};  // Longer than uint16_t-era 1300 ms cap
+    EXPECT_TRUE(unit->torch(long_ms));
+    EXPECT_EQ(unit->lastDurationMs(), long_ms);
+    unit->update();
+    EXPECT_TRUE(unit->active());
     EXPECT_TRUE(unit->stop());
+    EXPECT_FALSE(unit->active());
+}
+
+TEST_F(TestAW3641EAsTorch, TorchOnStaysOnUntilStop)
+{
+    SCOPED_TRACE(ustr);
+
+    EXPECT_TRUE(unit->torchOn());
+    EXPECT_TRUE(unit->active());
+    EXPECT_EQ(unit->lastDurationMs(), 0u);
+
+    // update() never turns a torchOn() off
+    m5::utility::delay(80);
+    unit->update();
+    EXPECT_TRUE(unit->active());
+
+    EXPECT_TRUE(unit->stop());
+    EXPECT_FALSE(unit->active());
+    unit->update();
+    EXPECT_FALSE(unit->active());
+}
+
+TEST_F(TestAW3641EAsTorch, TorchOnWhileOn)
+{
+    SCOPED_TRACE(ustr);
+
+    EXPECT_TRUE(unit->torchOn());
+    EXPECT_TRUE(unit->torchOn());
+    EXPECT_TRUE(unit->active());
+    EXPECT_TRUE(unit->stop());
+}
+
+TEST_F(TestAW3641EAsTorch, TorchOnTakesOverTimedTorch)
+{
+    SCOPED_TRACE(ustr);
+
+    EXPECT_TRUE(unit->torch(50));
+    EXPECT_TRUE(unit->torchOn());
+    EXPECT_EQ(unit->lastDurationMs(), 0u);
+
+    // The timed turn-off of torch(50) no longer applies
+    m5::utility::delay(80);
+    unit->update();
+    EXPECT_TRUE(unit->active());
+    EXPECT_TRUE(unit->stop());
+}
+
+TEST_F(TestAW3641EAsTorch, TimedTorchAfterTorchOn)
+{
+    SCOPED_TRACE(ustr);
+
+    // torch() cancels torchOn() and turns off after its duration again
+    EXPECT_TRUE(unit->torchOn());
+    EXPECT_TRUE(unit->torch(50));
+    EXPECT_EQ(unit->lastDurationMs(), 50u);
+
+    m5::utility::delay(80);
+    unit->update();
+    EXPECT_FALSE(unit->active());
 }
 
 TEST_F(TestAW3641EAsTorch, TorchRejectsWhenSwitchPositionFlash)

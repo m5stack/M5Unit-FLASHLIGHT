@@ -79,6 +79,7 @@ bool UnitAW3641E::begin()
     }
 
     _active      = false;
+    _continuous  = false;
     _start_ms    = 0;
     _duration_ms = 0;
     return true;
@@ -86,11 +87,10 @@ bool UnitAW3641E::begin()
 
 void UnitAW3641E::update(const bool /*force*/)
 {
-    if (!_active) {
+    if (!_active || _continuous) {
         return;
     }
-    const uint32_t now{m5::utility::millis()};
-    if (static_cast<uint32_t>(now - _start_ms) >= _duration_ms) {
+    if (m5::utility::hasElapsed(_start_ms, _duration_ms)) {
         if (writeDigitalTX(false)) {
             _active = false;
         }
@@ -102,7 +102,8 @@ bool UnitAW3641E::stop()
     if (!writeDigitalTX(false)) {
         return false;
     }
-    _active = false;
+    _active     = false;
+    _continuous = false;
     return true;
 }
 
@@ -128,7 +129,8 @@ bool UnitAW3641E::flash(const aw3641e::Brightness brightness, const uint16_t dur
     // Cancel any in-flight flash/torch before starting a new one.
     // send_pulse_train() also drives EN LOW + waits T_OFF (>500 us) at its start,
     // satisfying the chip's latch-reset requirement automatically.
-    _active = false;
+    _active     = false;
+    _continuous = false;
 
     const uint8_t n{to_pulse_count(brightness)};
     if (!send_pulse_train(n)) {
@@ -141,7 +143,7 @@ bool UnitAW3641E::flash(const aw3641e::Brightness brightness, const uint16_t dur
     return true;
 }
 
-bool UnitAW3641E::torch(const uint16_t duration_ms)
+bool UnitAW3641E::torch(const uint32_t duration_ms)
 {
     if (_cfg.switch_position != aw3641e::SwitchPosition::Torch) {
         M5_LIB_LOGE("torch() requires switch_position == Torch, but it is configured as Flash");
@@ -152,28 +154,42 @@ bool UnitAW3641E::torch(const uint16_t duration_ms)
         return false;
     }
 
-    // Library-side safety cap.
-    uint16_t effective_ms{duration_ms};
-    if (effective_ms > aw3641e::TORCH_MAX_DURATION_MS) {
-        M5_LIB_LOGW("torch duration_ms %u exceeds safety cap %u, clamping", static_cast<unsigned>(duration_ms),
-                    static_cast<unsigned>(aw3641e::TORCH_MAX_DURATION_MS));
-        effective_ms = aw3641e::TORCH_MAX_DURATION_MS;
+    if (!start_torch()) {
+        return false;
     }
+    _duration_ms = duration_ms;
+    _start_ms    = m5::utility::millis();
+    _active      = true;
+    return true;
+}
 
+bool UnitAW3641E::torchOn()
+{
+    if (_cfg.switch_position != aw3641e::SwitchPosition::Torch) {
+        M5_LIB_LOGE("torchOn() requires switch_position == Torch, but it is configured as Flash");
+        return false;
+    }
+    // Already on (torchOn() or a timed torch()): EN is HIGH, so just stop the timed turn-off.
+    if (!_active && !start_torch()) {
+        return false;
+    }
+    _duration_ms = 0;
+    _start_ms    = m5::utility::millis();
+    _continuous  = true;
+    _active      = true;
+    return true;
+}
+
+bool UnitAW3641E::start_torch()
+{
     // Cancel any in-flight operation by toggling EN low briefly, then high.
-    _active = false;
+    _active     = false;
+    _continuous = false;
     if (!writeDigitalTX(false)) {
         return false;
     }
     m5::utility::delayMicroseconds(PULSE_OFF_US);
-    if (!writeDigitalTX(true)) {
-        return false;
-    }
-
-    _duration_ms = effective_ms;
-    _start_ms    = m5::utility::millis();
-    _active      = true;
-    return true;
+    return writeDigitalTX(true);
 }
 
 bool UnitAW3641E::send_pulse_train(const uint8_t pulse_count)

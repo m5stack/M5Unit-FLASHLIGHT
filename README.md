@@ -50,7 +50,8 @@ that selects between Flash and Torch mode by wiring the AW3641E FLASH pin to +5V
 on the PCB before powering the unit:
 
 - **Flash side**: use `unit.flash(Brightness, duration_ms)` — short pulsed flash (<= 220 ms)
-- **Torch side**: use `unit.torch(duration_ms)` — steady ~214 mA illumination (<= 1.3 s)
+- **Torch side**: use `unit.torch(duration_ms)` — steady ~214 mA illumination for the given time,
+  or `unit.torchOn()` to keep it on until `unit.stop()`
 
 ### Examples
 See also [examples/UnitUnified](examples/UnitUnified)
