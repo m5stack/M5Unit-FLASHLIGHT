@@ -20,6 +20,16 @@ on the PCB before powering the unit:
 - **Torch side**: use `unit.torch(duration_ms)` — steady ~214 mA illumination for the given time,
   or `unit.torchOn()` to keep it on until `unit.stop()`
 
+### Power and heat
+
+- **100% flash draws a large current from the 5 V rail.** If the host runs on a low or bare
+  battery, it may reset (brownout) at the moment of the flash. Power the host from USB or
+  charge the battery.
+- **Flash mode heats the unit with each flash.** M5Stack recommends an interval of 8 to 15
+  seconds between flashes ([Unit FlashLight document](https://docs.m5stack.com/en/unit/FlashLight)).
+- **Torch mode has no hardware timeout.** `torchOn()` keeps the LED on until `unit.stop()`, and the
+  unit gets hot during long continuous use. Turn it off when it is not needed.
+
 ### Include file
 ```cpp
 #include <M5UnitUnifiedFLASHLIGHT.h>
