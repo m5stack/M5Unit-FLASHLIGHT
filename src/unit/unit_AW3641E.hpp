@@ -64,8 +64,9 @@ constexpr uint32_t PULSE_LOW_US{4};
 constexpr uint32_t PULSE_OFF_US{600};
 
 //! @brief Maximum duration for a single flash() call in milliseconds
-//! @note Matches the AW3641E Flash mode hardware timeout for Pulse 1-8
-//!       (T_FLASH typ 220 ms, 180-310 ms). For longer continuous on-time use torch() instead.
+//! @note Matches the AW3641E Flash mode hardware timeout for Pulse 1-8 (T_FLASH typ 220 ms,
+//!       180-310 ms), after which the chip lowers the LED current but does not turn it off.
+//!       For longer continuous on-time use torch() instead.
 constexpr uint16_t FLASH_MAX_DURATION_MS{220};
 
 //! @brief Default torch() duration in milliseconds (used when torch() is called with no argument)
@@ -82,8 +83,8 @@ constexpr uint32_t TORCH_DEFAULT_DURATION_MS{1300};
   @param b Brightness level
   @return Pulse count in range 1..8 (Pulse 1 = 100% / 220 ms, Pulse 8 = 30% / 220 ms)
   @note Only Pulse 1-8 (220 ms hardware timeout) is exposed by this library; the chip's
-        Pulse 9-16 (1.3 s timeout) range is not used because thermal protection
-        causes the LED to dim before the timeout expires at higher currents.
+        Pulse 9-16 (1.3 s timeout) range is not used. For an on-time longer than 220 ms
+        use torch().
  */
 constexpr uint8_t to_pulse_count(const Brightness b)
 {
@@ -106,8 +107,8 @@ constexpr uint8_t to_pulse_count(const Brightness b)
            current.
   @warning Torch mode (S1 = Torch side): use torch() for steady ~214 mA illumination for a
            given time, or torchOn() to keep it on until stop(). Calling torch() while S1
-           is on the Flash side will fire the LED briefly and then turn it off by the
-           Flash-mode timeout (T_FLASH 180-310 ms).
+           is on the Flash side fires a 100% flash, and after the Flash-mode timeout
+           (T_FLASH 180-310 ms) the LED stays on at a lower current until EN goes LOW.
   @note    If observed behavior does not match the API, power down the unit and toggle
            the physical switch on the PCB before retrying. config_t::switch_position
            must match the physical switch.
@@ -178,10 +179,11 @@ public:
               False if config_t::switch_position is not Flash (logs error),
               if duration_ms is 0, or if the GPIO write fails.
       @note Auto-off depends on periodic Units.update() calls — update() drives EN LOW
-            after duration_ms elapses. The AW3641E also enforces a hardware timeout in
-            Flash mode (T_FLASH typ 220 ms, 180-310 ms), so the LED turns off even if update()
-            is missed; with duration_ms of 180-220 ms the hardware may turn it off first.
-            However, active() remains true until update() runs.
+            after duration_ms elapses. The AW3641E ends the flash at its hardware timeout
+            (T_FLASH typ 220 ms, 180-310 ms), but the LED does NOT turn off: while EN stays HIGH
+            it keeps lighting at a lower current. If update() is not called (blocked task,
+            long delay(), etc.), the LED stays on until stop() is called or power is removed.
+            With duration_ms of 180-220 ms the flash may end before update() drives EN LOW.
             If a previous flash/torch is still active(), it is cancelled and
             the new flash starts after T_OFF (>500 µs).
       @warning Requires config_t::switch_position == SwitchPosition::Flash to match
