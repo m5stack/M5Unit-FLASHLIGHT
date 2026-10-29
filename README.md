@@ -22,12 +22,12 @@ on the PCB before powering the unit:
 
 ### Power and heat
 
-- **100% flash draws a large current from the 5 V rail.** If the host runs on a low or bare
-  battery, it may reset (brownout) at the moment of the flash. Power the host from USB or
-  charge the battery.
+- **100% flash draws a large current from the 5 V rail.** If the host's battery is low, or the
+  host runs on battery only, it may reset (brownout) at the moment of the flash. Power the host
+  from USB and keep the battery charged.
 - **Flash mode heats the unit with each flash.** M5Stack recommends an interval of 8 to 15
   seconds between flashes ([Unit FlashLight document](https://docs.m5stack.com/en/unit/FlashLight)).
-- **Torch mode has no hardware timeout.** `torchOn()` keeps the LED on until `unit.stop()`, and the
+- **Torch mode has no hardware timeout.** `unit.torchOn()` keeps the LED on until `unit.stop()`, and the
   unit gets hot during long continuous use. Turn it off when it is not needed.
 
 ### Include file
