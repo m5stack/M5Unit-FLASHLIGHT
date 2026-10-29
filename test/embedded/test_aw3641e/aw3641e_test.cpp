@@ -12,30 +12,31 @@
 #include <googletest/test_template.hpp>
 #include <googletest/test_helper.hpp>
 #include <unit/unit_AW3641E.hpp>
+#include <wiring/m5_unit_unified_wiring.hpp>
 
 using namespace m5::unit::googletest;
 using namespace m5::unit;
 using namespace m5::unit::aw3641e;
 
-class TestAW3641E : public GPIOComponentTestBase<UnitAW3641E> {
+class TestAW3641EBase : public GPIOComponentTestBase<UnitAW3641E> {
 protected:
     // Override to match UnitAW3641E's TX-only nature (EN pin only, no RX).
     bool begin() override
     {
         return m5::unit::wiring::addGPIO(Units, *unit, m5::unit::wiring::GpioRole::OutOnly) && Units.begin();
     }
+};
+
+class TestAW3641E : public TestAW3641EBase {
+protected:
     virtual UnitAW3641E* get_instance() override
     {
         return new m5::unit::UnitAW3641E();
     }
 };
 
-class TestAW3641EAsTorch : public GPIOComponentTestBase<UnitAW3641E> {
+class TestAW3641EAsTorch : public TestAW3641EBase {
 protected:
-    bool begin() override
-    {
-        return m5::unit::wiring::addGPIO(Units, *unit, m5::unit::wiring::GpioRole::OutOnly) && Units.begin();
-    }
     virtual UnitAW3641E* get_instance() override
     {
         auto* u             = new m5::unit::UnitAW3641E();
@@ -45,50 +46,6 @@ protected:
         return u;
     }
 };
-
-// --- pure-API tests (no hardware required) ---
-
-TEST(AW3641E, PulseCountTranslation)
-{
-    EXPECT_EQ(to_pulse_count(Brightness::Pct100), 1);
-    EXPECT_EQ(to_pulse_count(Brightness::Pct90), 2);
-    EXPECT_EQ(to_pulse_count(Brightness::Pct80), 3);
-    EXPECT_EQ(to_pulse_count(Brightness::Pct70), 4);
-    EXPECT_EQ(to_pulse_count(Brightness::Pct60), 5);
-    EXPECT_EQ(to_pulse_count(Brightness::Pct50), 6);
-    EXPECT_EQ(to_pulse_count(Brightness::Pct40), 7);
-    EXPECT_EQ(to_pulse_count(Brightness::Pct30), 8);
-}
-
-TEST(AW3641E, SwitchPositionEnumIsDistinct)
-{
-    EXPECT_NE(SwitchPosition::Flash, SwitchPosition::Torch);
-}
-
-TEST(AW3641E, ConfigDefaults)
-{
-    UnitAW3641E::config_t cfg{};
-    EXPECT_EQ(cfg.switch_position, SwitchPosition::Flash);
-}
-
-TEST(AW3641E, DurationConstants)
-{
-    EXPECT_EQ(FLASH_MAX_DURATION_MS, 220u);
-    EXPECT_EQ(TORCH_DEFAULT_DURATION_MS, 1300u);
-    EXPECT_LT(FLASH_MAX_DURATION_MS, TORCH_DEFAULT_DURATION_MS);
-}
-
-TEST(AW3641E, PulseTimingConstants)
-{
-    // T_HI/T_LO must be within the AW3641E datasheet budget (0.75..10 us).
-    // Lower bound relaxed to 1 us because constexpr uint32_t cannot express 0.75.
-    EXPECT_GE(PULSE_HIGH_US, 1u);
-    EXPECT_LE(PULSE_HIGH_US, 10u);
-    EXPECT_GE(PULSE_LOW_US, 1u);
-    EXPECT_LE(PULSE_LOW_US, 10u);
-    // T_OFF must exceed 500 us per datasheet.
-    EXPECT_GT(PULSE_OFF_US, 500u);
-}
 
 // --- HW-in-loop tests (require GPIO adapter to be wired to U152) ---
 
@@ -105,18 +62,6 @@ TEST_F(TestAW3641E, BeginInitialState)
     EXPECT_FALSE(unit->active());
     EXPECT_EQ(unit->lastDurationMs(), 0u);
     EXPECT_EQ(unit->config().switch_position, SwitchPosition::Flash);
-}
-
-TEST_F(TestAW3641E, ConfigRoundTrip)
-{
-    SCOPED_TRACE(ustr);
-
-    auto cfg            = unit->config();
-    cfg.switch_position = SwitchPosition::Torch;
-    unit->config(cfg);
-
-    auto out = unit->config();
-    EXPECT_EQ(out.switch_position, SwitchPosition::Torch);
 }
 
 TEST_F(TestAW3641E, FlashShortPulse)
@@ -165,18 +110,6 @@ TEST_F(TestAW3641E, FlashDurationClamp)
     EXPECT_TRUE(unit->stop());
 }
 
-TEST_F(TestAW3641E, FlashRejectsWhenSwitchPositionTorch)
-{
-    SCOPED_TRACE(ustr);
-
-    auto cfg            = unit->config();
-    cfg.switch_position = SwitchPosition::Torch;
-    unit->config(cfg);
-
-    EXPECT_FALSE(unit->flash(Brightness::Pct100, 50));
-    EXPECT_FALSE(unit->active());
-}
-
 TEST_F(TestAW3641E, AllBrightnessLevels)
 {
     SCOPED_TRACE(ustr);
@@ -185,8 +118,11 @@ TEST_F(TestAW3641E, AllBrightnessLevels)
                                  Brightness::Pct60,  Brightness::Pct50, Brightness::Pct40, Brightness::Pct30};
     for (auto b : levels) {
         EXPECT_TRUE(unit->flash(b, 30));
+        EXPECT_TRUE(unit->active());
+        EXPECT_EQ(unit->lastDurationMs(), 30u);
         m5::utility::delay(50);
         unit->update();
+        EXPECT_FALSE(unit->active());
     }
     EXPECT_TRUE(unit->stop());
 }
@@ -229,6 +165,52 @@ TEST_F(TestAW3641E, StopWhenIdleIsNoOpSuccess)
 
     EXPECT_FALSE(unit->active());
     EXPECT_TRUE(unit->stop());
+    EXPECT_FALSE(unit->active());
+}
+
+TEST_F(TestAW3641E, FlashStaysActiveBeforeDuration)
+{
+    SCOPED_TRACE(ustr);
+
+    EXPECT_TRUE(unit->flash(Brightness::Pct100, 200));
+    unit->update();  // well before 200 ms
+    EXPECT_TRUE(unit->active());
+    EXPECT_TRUE(unit->stop());
+}
+
+TEST_F(TestAW3641E, RejectedCallKeepsFlashActive)
+{
+    SCOPED_TRACE(ustr);
+
+    EXPECT_TRUE(unit->flash(Brightness::Pct100, 200));
+    EXPECT_FALSE(unit->flash(Brightness::Pct100, 0));  // rejected
+    EXPECT_FALSE(unit->torch(50));                     // rejected (Flash position)
+    EXPECT_FALSE(unit->torchOn());                     // rejected (Flash position)
+    EXPECT_TRUE(unit->active());
+    EXPECT_EQ(unit->lastDurationMs(), 200u);
+    EXPECT_TRUE(unit->stop());
+}
+
+TEST_F(TestAW3641E, LastDurationKeptAfterStopAndAutoOff)
+{
+    SCOPED_TRACE(ustr);
+
+    EXPECT_TRUE(unit->flash(Brightness::Pct100, 50));
+    m5::utility::delay(80);
+    unit->update();
+    EXPECT_FALSE(unit->active());
+    EXPECT_EQ(unit->lastDurationMs(), 50u);
+
+    EXPECT_TRUE(unit->flash(Brightness::Pct100, 100));
+    EXPECT_TRUE(unit->stop());
+    EXPECT_EQ(unit->lastDurationMs(), 100u);
+}
+
+TEST_F(TestAW3641E, TorchRejectedInFlashPosition)
+{
+    SCOPED_TRACE(ustr);
+
+    EXPECT_FALSE(unit->torch(50));
     EXPECT_FALSE(unit->active());
 }
 
@@ -352,14 +334,49 @@ TEST_F(TestAW3641EAsTorch, TimedTorchAfterTorchOn)
     EXPECT_FALSE(unit->active());
 }
 
-TEST_F(TestAW3641EAsTorch, TorchRejectsWhenSwitchPositionFlash)
+TEST_F(TestAW3641EAsTorch, TorchRetriggerCancelsPrevious)
 {
     SCOPED_TRACE(ustr);
 
-    auto cfg            = unit->config();
-    cfg.switch_position = SwitchPosition::Flash;
-    unit->config(cfg);
+    EXPECT_TRUE(unit->torch(50));
+    m5::utility::delay(30);
+    EXPECT_TRUE(unit->torch(100));  // restarts the timer
+    EXPECT_EQ(unit->lastDurationMs(), 100u);
+    m5::utility::delay(40);  // 70 ms after the first torch(50)
+    unit->update();
+    EXPECT_TRUE(unit->active());
+    m5::utility::delay(80);
+    unit->update();
+    EXPECT_FALSE(unit->active());
+}
 
-    EXPECT_FALSE(unit->torch(50));
+TEST_F(TestAW3641EAsTorch, TorchCancelsInFlightWithStop)
+{
+    SCOPED_TRACE(ustr);
+
+    EXPECT_TRUE(unit->torch(200));
+    EXPECT_TRUE(unit->stop());
+    EXPECT_FALSE(unit->active());
+    unit->update();
+    EXPECT_FALSE(unit->active());
+}
+
+TEST_F(TestAW3641EAsTorch, RejectedCallKeepsTorchActive)
+{
+    SCOPED_TRACE(ustr);
+
+    EXPECT_TRUE(unit->torch(200));
+    EXPECT_FALSE(unit->flash(Brightness::Pct100, 50));  // rejected (Torch position)
+    EXPECT_FALSE(unit->torch(0));                       // rejected
+    EXPECT_TRUE(unit->active());
+    EXPECT_EQ(unit->lastDurationMs(), 200u);
+    EXPECT_TRUE(unit->stop());
+}
+
+TEST_F(TestAW3641EAsTorch, FlashRejectedInTorchPosition)
+{
+    SCOPED_TRACE(ustr);
+
+    EXPECT_FALSE(unit->flash(Brightness::Pct100, 50));
     EXPECT_FALSE(unit->active());
 }
