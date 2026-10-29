@@ -22,8 +22,9 @@ using namespace m5::unit::aw3641e;
 namespace {
 
 // Scoped critical section guard for the pulse train (ESP32/FreeRTOS only).
-// Uses a spinlock so nested critical sections and SMP cores are handled correctly,
-// and prior interrupt state is preserved on exit.
+// Disables interrupts on the current core while the guard is alive and restores the
+// prior interrupt state on exit. The spinlock is per guard, so it does not serialize
+// against other cores; it only keeps the pulse train free of interrupts and task switches.
 // Keeps T_HI/T_LO jitter under the 10 us upper bound even across task switches.
 class InterruptGuard {
 public:
