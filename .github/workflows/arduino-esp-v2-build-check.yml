@@ -107,7 +107,7 @@ jobs:
           {
             echo "yaml<<EOF"
             echo "$REQUIRED_LIBRARIES" | tr ',' '\n' | while read -r lib; do
-              echo "- name: $lib"
+              [ -n "$lib" ] && echo "- name: $lib"
             done
             echo "- source-path: ./"
             echo "EOF"

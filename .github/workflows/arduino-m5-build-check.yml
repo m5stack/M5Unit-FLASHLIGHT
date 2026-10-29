@@ -103,7 +103,7 @@ jobs:
 #          - m5stack_unit_cams3
 
         platform-version:
-          - 3.3.9
+          - 3.3.10
 
         platform:
           - m5stack
@@ -120,7 +120,7 @@ jobs:
             unit: UnitFlashLight
             sketch: FlashDemo
             board: m5stack_core
-            platform-version: 3.3.9
+            platform-version: 3.3.10
             platform: m5stack
             archi: esp32
             variant: torch
@@ -135,7 +135,7 @@ jobs:
           {
             echo "yaml<<EOF"
             echo "$REQUIRED_LIBRARIES" | tr ',' '\n' | while read -r lib; do
-              echo "- name: $lib"
+              [ -n "$lib" ] && echo "- name: $lib"
             done
             echo "- source-path: ./"
             echo "EOF"
