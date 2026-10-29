@@ -9,7 +9,6 @@
   *********************************************************************
   Set the on-board mode selection switch (silkscreen `S1`) to match the
   demo you want to run, then choose the demo with the define below.
-  Uncomment the line (or pass -DUSE_TORCH_DEMO via build flags) to run the Torch demo.
   *********************************************************************
 
   // Default: Flash mode (S1 = Flash side)
