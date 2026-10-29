@@ -8,8 +8,8 @@
 
   *********************************************************************
   Set the on-board mode selection switch (silkscreen `S1`) to match the
-  demo you want to run, then choose the corresponding define below.
-  Uncomment ONE of the lines (or pass via -D build flag) before flashing.
+  demo you want to run, then choose the demo with the define below.
+  Uncomment the line (or pass -DUSE_TORCH_DEMO via build flags) to run the Torch demo.
   *********************************************************************
 
   // Default: Flash mode (S1 = Flash side)
@@ -107,11 +107,12 @@ void setup()
     M5.begin(m5cfg);
     M5.setTouchButtonHeightByRatio(100);
 
+    // The screen shall be in landscape mode
     if (lcd.height() > lcd.width()) {
         lcd.setRotation(1);
     }
 
-    auto cfg = unit.config();
+    auto cfg{unit.config()};
 #if defined(USE_TORCH_DEMO)
     cfg.switch_position = SwitchPosition::Torch;
 #else
