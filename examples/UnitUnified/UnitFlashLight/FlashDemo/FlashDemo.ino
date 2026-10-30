@@ -6,9 +6,9 @@
 /*
   Example using M5UnitUnified for UnitFlashLight (AW3641E, SKU:U152)
 
-  WARNING: Set the S1 switch on UnitFlashLight to the Flash side
-           for brightness/timeout selection to take effect.
-           When S1 is on the Torch side, the LED is lit at a fixed
-           current (~214 mA) regardless of pulse commands.
+  WARNING: Set the S1 switch on UnitFlashLight to match the demo:
+           Flash side for the Flash demo (default; brightness selection),
+           Torch side for the Torch demo (USE_TORCH_DEMO; fixed ~214 mA).
+           See main/FlashDemo.cpp for how to select the demo.
 */
 #include "main/FlashDemo.cpp"

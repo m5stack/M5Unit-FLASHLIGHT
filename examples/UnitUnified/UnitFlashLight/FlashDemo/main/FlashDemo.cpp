@@ -8,8 +8,7 @@
 
   *********************************************************************
   Set the on-board mode selection switch (silkscreen `S1`) to match the
-  demo you want to run, then choose the corresponding define below.
-  Uncomment ONE of the lines (or pass via -D build flag) before flashing.
+  demo you want to run, then choose the demo with the define below.
   *********************************************************************
 
   // Default: Flash mode (S1 = Flash side)
@@ -17,7 +16,7 @@
   //
   // To run the Torch demo, uncomment USE_TORCH_DEMO below or pass
   // -DUSE_TORCH_DEMO via build flags. Then set S1 = Torch side.
-  // BtnA click: drives a 1000 ms continuous illumination at ~214 mA.
+  // BtnA click: turns the LED on (~214 mA, stays on until the next click) / off.
 */
 // #define USE_TORCH_DEMO
 
@@ -33,17 +32,14 @@ auto& lcd{M5.Display};
 m5::unit::UnitUnified Units;
 m5::unit::UnitFlashLight unit;
 
+#if !defined(USE_TORCH_DEMO)
 const Brightness cycle[] = {
     Brightness::Pct100, Brightness::Pct90, Brightness::Pct80, Brightness::Pct70,
     Brightness::Pct60,  Brightness::Pct50, Brightness::Pct40, Brightness::Pct30,
 };
 size_t idx{0};
 
-#if defined(USE_TORCH_DEMO)
-constexpr uint16_t DURATION_MAX_MS{TORCH_MAX_DURATION_MS};
-#else
 constexpr uint16_t DURATION_MAX_MS{FLASH_MAX_DURATION_MS};
-#endif
 constexpr uint16_t DURATION_MIN_MS{10};
 uint16_t current_duration_ms{DURATION_MAX_MS};
 
@@ -52,6 +48,7 @@ unsigned brightness_percent(const Brightness b)
     // Pct100=0, Pct90=1, ..., Pct30=7 -> 100 - value * 10
     return 100u - static_cast<unsigned>(static_cast<uint8_t>(b)) * 10u;
 }
+#endif
 
 void draw_status(const char* last_action)
 {
@@ -69,17 +66,15 @@ void draw_status(const char* last_action)
     if (wide) {
         lcd.printf("FlashLight Demo\n");
         lcd.printf("S1: Torch side\n");
-        lcd.printf("dur:        %ums\n", static_cast<unsigned>(current_duration_ms));
+        lcd.printf("state:      %s\n", unit.active() ? "ON" : "OFF");
         lcd.printf("last:       %s\n", last_action ? last_action : "-");
-        lcd.printf("\nBtnA click: torch\n");
-        lcd.printf("BtnA hold : dur step\n");
+        lcd.printf("\nBtnA click: on/off\n");
     } else {
         lcd.printf("FlashLight\n");
         lcd.printf("S1: Torch\n");
-        lcd.printf("dur: %ums\n", static_cast<unsigned>(current_duration_ms));
+        lcd.printf("led: %s\n", unit.active() ? "ON" : "OFF");
         lcd.printf("act: %s\n", last_action ? last_action : "-");
-        lcd.printf("\nA clk: torch\n");
-        lcd.printf("A hld: step\n");
+        lcd.printf("\nA clk: on/off\n");
     }
 #else
     if (wide) {
@@ -111,11 +106,12 @@ void setup()
     M5.begin(m5cfg);
     M5.setTouchButtonHeightByRatio(100);
 
+    // The screen shall be in landscape mode
     if (lcd.height() > lcd.width()) {
         lcd.setRotation(1);
     }
 
-    auto cfg = unit.config();
+    auto cfg{unit.config()};
 #if defined(USE_TORCH_DEMO)
     cfg.switch_position = SwitchPosition::Torch;
 #else
@@ -140,9 +136,14 @@ void loop()
 
     if (M5.BtnA.wasClicked()) {
 #if defined(USE_TORCH_DEMO)
-        if (unit.torch(current_duration_ms)) {
-            M5.Log.printf("torch: duration=%ums\n", static_cast<unsigned>(current_duration_ms));
-            draw_status("torch");
+        if (unit.active()) {
+            if (unit.stop()) {
+                M5.Log.printf("torch: off\n");
+                draw_status("off");
+            }
+        } else if (unit.torchOn()) {
+            M5.Log.printf("torch: on\n");
+            draw_status("on");
         }
 #else
         const Brightness b{cycle[idx]};
@@ -155,6 +156,7 @@ void loop()
 #endif
     }
 
+#if !defined(USE_TORCH_DEMO)
     if (M5.BtnA.wasHold()) {
         if (current_duration_ms == DURATION_MAX_MS) {
             current_duration_ms = DURATION_MIN_MS;
@@ -165,4 +167,38 @@ void loop()
         M5.Log.printf("duration step: %ums\n", static_cast<unsigned>(current_duration_ms));
         draw_status("step");
     }
+#endif
 }
+
+#if !defined(ARDUINO)
+#include <freertos/FreeRTOS.h>
+#include <freertos/task.h>
+#include <esp_timer.h>
+
+#if CONFIG_FREERTOS_UNICORE
+// Single-core SoCs: run loop() back-to-back, but every ~2 s yield a 5 ms slice so the IDLE task
+// runs and feeds the task watchdog (default 5 s).
+static inline void feedIdleTaskPeriodically(void)
+{
+    constexpr uint32_t FEED_INTERVAL_MS{2000};
+    constexpr TickType_t FEED_SLEEP_TICKS{pdMS_TO_TICKS(5)};
+    static uint32_t s_last_feed_ms{};
+    const uint32_t now_ms{static_cast<uint32_t>(esp_timer_get_time() / 1000)};
+    if (now_ms - s_last_feed_ms >= FEED_INTERVAL_MS) {
+        s_last_feed_ms = now_ms;
+        vTaskDelay(FEED_SLEEP_TICKS);
+    }
+}
+#endif
+
+extern "C" void app_main(void)
+{
+    setup();
+    for (;;) {
+#if CONFIG_FREERTOS_UNICORE
+        feedIdleTaskPeriodically();
+#endif
+        loop();
+    }
+}
+#endif
