@@ -21,5 +21,6 @@ var unit___a_w3641_e_8hpp =
     [ "PULSE_HIGH_US", "unit___a_w3641_e_8hpp.html#a8e3924238514128da4ee766d5be807f9", null ],
     [ "PULSE_LOW_US", "unit___a_w3641_e_8hpp.html#a7090cb03a1f70f7f7932a3f44b0d3a4d", null ],
     [ "PULSE_OFF_US", "unit___a_w3641_e_8hpp.html#ac84d0dcd7195ab142655a2b7b908caee", null ],
+    [ "TORCH_DEFAULT_DURATION_MS", "unit___a_w3641_e_8hpp.html#a97609e5e8403ff5dc0b43e2d7f12cb38", null ],
     [ "TORCH_MAX_DURATION_MS", "unit___a_w3641_e_8hpp.html#abeb94a5d193a58f92f497870901c9f02", null ]
 ];

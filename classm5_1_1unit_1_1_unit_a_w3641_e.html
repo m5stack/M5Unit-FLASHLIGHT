@@ -27,7 +27,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">M5Unit-FLASHLIGHT<span id="projectnumber">&#160;0.0.2 git rev:4071dde</span>
+   <div id="projectname">M5Unit-FLASHLIGHT<span id="projectnumber">&#160;0.1.0 git rev:ba3d197</span>
    </div>
   </td>
  </tr>
@@ -136,38 +136,44 @@ virtual&#160;</td><td class="memItemRight" valign="bottom"><b>~UnitAW3641E</b> (
 <tr class="memdesc:a8a9db524ca3d9bd8a65f89bc2a370f8f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Begin the unit (configures EN as OUTPUT and drives EN LOW)  <br /></td></tr>
 <tr class="separator:a8a9db524ca3d9bd8a65f89bc2a370f8f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8f872fd1f38f907603685dd2f212b50b" id="r_a8f872fd1f38f907603685dd2f212b50b"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8f872fd1f38f907603685dd2f212b50b">update</a> (const bool force=false) override</td></tr>
-<tr class="memdesc:a8f872fd1f38f907603685dd2f212b50b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Drive EN LOW automatically when the flash/torch duration has elapsed.  <br /></td></tr>
+<tr class="memdesc:a8f872fd1f38f907603685dd2f212b50b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Drive EN LOW automatically when the flash/torch duration has elapsed (not for <a class="el" href="#aa620b308ff4c93463f3a748209e685ea" title="Turn the LED on in Torch mode until stop() is called.">torchOn()</a>)  <br /></td></tr>
 <tr class="separator:a8f872fd1f38f907603685dd2f212b50b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr><td colspan="2"><div class="groupHeader">Settings for begin</div></td></tr>
-<tr class="memitem:ae421087a609afb1d90e7d2241c2ce0c0" id="r_ae421087a609afb1d90e7d2241c2ce0c0"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structm5_1_1unit_1_1_unit_a_w3641_e_1_1config__t.html">config_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae421087a609afb1d90e7d2241c2ce0c0">config</a> ()</td></tr>
-<tr class="memdesc:ae421087a609afb1d90e7d2241c2ce0c0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the configuration.  <br /></td></tr>
-<tr class="separator:ae421087a609afb1d90e7d2241c2ce0c0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a844d0da849169f1581a74c6e4d61a59c" id="r_a844d0da849169f1581a74c6e4d61a59c"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structm5_1_1unit_1_1_unit_a_w3641_e_1_1config__t.html">config_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a844d0da849169f1581a74c6e4d61a59c">config</a> () const</td></tr>
+<tr class="memdesc:a844d0da849169f1581a74c6e4d61a59c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the configuration.  <br /></td></tr>
+<tr class="separator:a844d0da849169f1581a74c6e4d61a59c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a75fbc4940142aa9fe882fdd950c25144" id="r_a75fbc4940142aa9fe882fdd950c25144"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a75fbc4940142aa9fe882fdd950c25144">config</a> (const <a class="el" href="structm5_1_1unit_1_1_unit_a_w3641_e_1_1config__t.html">config_t</a> &amp;cfg)</td></tr>
 <tr class="memdesc:a75fbc4940142aa9fe882fdd950c25144"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the configuration.  <br /></td></tr>
 <tr class="separator:a75fbc4940142aa9fe882fdd950c25144"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr><td colspan="2"><div class="groupHeader">Operation control</div></td></tr>
 <tr class="memitem:acf7bee408c3a66796bbe0fc3f01ec47f" id="r_acf7bee408c3a66796bbe0fc3f01ec47f"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#acf7bee408c3a66796bbe0fc3f01ec47f">stop</a> ()</td></tr>
-<tr class="memdesc:acf7bee408c3a66796bbe0fc3f01ec47f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Stop any in-flight flash or torch (drives EN LOW immediately)  <br /></td></tr>
+<tr class="memdesc:acf7bee408c3a66796bbe0fc3f01ec47f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Stop any in-flight flash or torch, including <a class="el" href="#aa620b308ff4c93463f3a748209e685ea" title="Turn the LED on in Torch mode until stop() is called.">torchOn()</a> (drives EN LOW immediately)  <br /></td></tr>
 <tr class="separator:acf7bee408c3a66796bbe0fc3f01ec47f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9fbe0377d974f7a702b9c86b233e43ee" id="r_a9fbe0377d974f7a702b9c86b233e43ee"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9fbe0377d974f7a702b9c86b233e43ee">flash</a> (const <a class="el" href="unit___a_w3641_e_8hpp.html#a09a5402a069c7612c8013a6f40da55d9">aw3641e::Brightness</a> brightness=<a class="el" href="unit___a_w3641_e_8hpp.html#a09a5402a069c7612c8013a6f40da55d9a2badc2ca0993b5cad97b2a4f2a4bed98">aw3641e::Brightness::Pct100</a>, const uint16_t duration_ms=<a class="el" href="unit___a_w3641_e_8hpp.html#ad361e890de16c4e85a68a00cbc3a822f">aw3641e::FLASH_MAX_DURATION_MS</a>)</td></tr>
 <tr class="memdesc:a9fbe0377d974f7a702b9c86b233e43ee"><td class="mdescLeft">&#160;</td><td class="mdescRight">Fire a flash with the given brightness for up to FLASH_MAX_DURATION_MS.  <br /></td></tr>
 <tr class="separator:a9fbe0377d974f7a702b9c86b233e43ee"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2b80022618f4134797cd9223048be722" id="r_a2b80022618f4134797cd9223048be722"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2b80022618f4134797cd9223048be722">torch</a> (const uint16_t duration_ms=<a class="el" href="unit___a_w3641_e_8hpp.html#abeb94a5d193a58f92f497870901c9f02">aw3641e::TORCH_MAX_DURATION_MS</a>)</td></tr>
-<tr class="memdesc:a2b80022618f4134797cd9223048be722"><td class="mdescLeft">&#160;</td><td class="mdescRight">Drive the LED continuously in Torch mode for up to TORCH_MAX_DURATION_MS.  <br /></td></tr>
-<tr class="separator:a2b80022618f4134797cd9223048be722"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af2edd3da84a7c50b50a148893e833ad4" id="r_af2edd3da84a7c50b50a148893e833ad4"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af2edd3da84a7c50b50a148893e833ad4">torch</a> (const uint32_t duration_ms=<a class="el" href="unit___a_w3641_e_8hpp.html#a97609e5e8403ff5dc0b43e2d7f12cb38">aw3641e::TORCH_DEFAULT_DURATION_MS</a>)</td></tr>
+<tr class="memdesc:af2edd3da84a7c50b50a148893e833ad4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Drive the LED in Torch mode for the given duration.  <br /></td></tr>
+<tr class="separator:af2edd3da84a7c50b50a148893e833ad4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa620b308ff4c93463f3a748209e685ea" id="r_aa620b308ff4c93463f3a748209e685ea"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa620b308ff4c93463f3a748209e685ea">torchOn</a> ()</td></tr>
+<tr class="memdesc:aa620b308ff4c93463f3a748209e685ea"><td class="mdescLeft">&#160;</td><td class="mdescRight">Turn the LED on in Torch mode until <a class="el" href="#acf7bee408c3a66796bbe0fc3f01ec47f" title="Stop any in-flight flash or torch, including torchOn() (drives EN LOW immediately)">stop()</a> is called.  <br /></td></tr>
+<tr class="separator:aa620b308ff4c93463f3a748209e685ea"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr><td colspan="2"><div class="groupHeader">Status accessors</div></td></tr>
-<tr class="memitem:af83c71df6ed60f65725a87dc6fd70a30" id="r_af83c71df6ed60f65725a87dc6fd70a30"><td class="memItemLeft" align="right" valign="top">uint16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af83c71df6ed60f65725a87dc6fd70a30">lastDurationMs</a> () const</td></tr>
-<tr class="memdesc:af83c71df6ed60f65725a87dc6fd70a30"><td class="mdescLeft">&#160;</td><td class="mdescRight">Last applied on-duration in milliseconds (clamped value used for <a class="el" href="#a9fbe0377d974f7a702b9c86b233e43ee" title="Fire a flash with the given brightness for up to FLASH_MAX_DURATION_MS.">flash()</a> or <a class="el" href="#a2b80022618f4134797cd9223048be722" title="Drive the LED continuously in Torch mode for up to TORCH_MAX_DURATION_MS.">torch()</a>)  <br /></td></tr>
-<tr class="separator:af83c71df6ed60f65725a87dc6fd70a30"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a90fa5427296da23232153a30a297c614" id="r_a90fa5427296da23232153a30a297c614"><td class="memItemLeft" align="right" valign="top">uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a90fa5427296da23232153a30a297c614">lastDurationMs</a> () const</td></tr>
+<tr class="memdesc:a90fa5427296da23232153a30a297c614"><td class="mdescLeft">&#160;</td><td class="mdescRight">Last applied on-duration in milliseconds (value used for <a class="el" href="#a9fbe0377d974f7a702b9c86b233e43ee" title="Fire a flash with the given brightness for up to FLASH_MAX_DURATION_MS.">flash()</a> or <a class="el" href="#af2edd3da84a7c50b50a148893e833ad4" title="Drive the LED in Torch mode for the given duration.">torch()</a>)  <br /></td></tr>
+<tr class="separator:a90fa5427296da23232153a30a297c614"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1a82ec3ee70488d8ba345a8fa18befdf" id="r_a1a82ec3ee70488d8ba345a8fa18befdf"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1a82ec3ee70488d8ba345a8fa18befdf">active</a> () const</td></tr>
 <tr class="memdesc:a1a82ec3ee70488d8ba345a8fa18befdf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Is a flash or torch currently in progress?  <br /></td></tr>
 <tr class="separator:a1a82ec3ee70488d8ba345a8fa18befdf"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pro-methods" name="pro-methods"></a>
 Protected Member Functions</h2></td></tr>
-<tr class="memitem:a29af130ee423bc791d3498a2e2e2195e" id="r_a29af130ee423bc791d3498a2e2e2195e"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a29af130ee423bc791d3498a2e2e2195e">send_pulse_train</a> (const uint8_t pulse_count)</td></tr>
-<tr class="memdesc:a29af130ee423bc791d3498a2e2e2195e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Send a 1-wire EN pulse train of the given count (1..8 for Brightness Pct100..Pct30)  <br /></td></tr>
+<tr class="memitem:a29af130ee423bc791d3498a2e2e2195e" id="r_a29af130ee423bc791d3498a2e2e2195e"><td class="memItemLeft" align="right" valign="top"><a id="a29af130ee423bc791d3498a2e2e2195e" name="a29af130ee423bc791d3498a2e2e2195e"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>send_pulse_train</b> (const uint8_t pulse_count)</td></tr>
 <tr class="separator:a29af130ee423bc791d3498a2e2e2195e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6b07295aab5ebe2ded02566933271d44" id="r_a6b07295aab5ebe2ded02566933271d44"><td class="memItemLeft" align="right" valign="top"><a id="a6b07295aab5ebe2ded02566933271d44" name="a6b07295aab5ebe2ded02566933271d44"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>start_torch</b> ()</td></tr>
+<tr class="separator:a6b07295aab5ebe2ded02566933271d44"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pro-attribs" name="pro-attribs"></a>
 Protected Attributes</h2></td></tr>
@@ -177,12 +183,15 @@ Protected Attributes</h2></td></tr>
 <tr class="memitem:a12e3644434b8c926fa6d9f322e42b00e" id="r_a12e3644434b8c926fa6d9f322e42b00e"><td class="memItemLeft" align="right" valign="top"><a id="a12e3644434b8c926fa6d9f322e42b00e" name="a12e3644434b8c926fa6d9f322e42b00e"></a>
 bool&#160;</td><td class="memItemRight" valign="bottom"><b>_active</b> {false}</td></tr>
 <tr class="separator:a12e3644434b8c926fa6d9f322e42b00e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac7113e44797548aa47e7ac0174dfa59f" id="r_ac7113e44797548aa47e7ac0174dfa59f"><td class="memItemLeft" align="right" valign="top"><a id="ac7113e44797548aa47e7ac0174dfa59f" name="ac7113e44797548aa47e7ac0174dfa59f"></a>
-uint32_t&#160;</td><td class="memItemRight" valign="bottom"><b>_start_ms</b> {0}</td></tr>
-<tr class="separator:ac7113e44797548aa47e7ac0174dfa59f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2d803ad49593d054a455867c031a50cb" id="r_a2d803ad49593d054a455867c031a50cb"><td class="memItemLeft" align="right" valign="top"><a id="a2d803ad49593d054a455867c031a50cb" name="a2d803ad49593d054a455867c031a50cb"></a>
-uint16_t&#160;</td><td class="memItemRight" valign="bottom"><b>_duration_ms</b> {0}</td></tr>
-<tr class="separator:a2d803ad49593d054a455867c031a50cb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2f57dc8acf31fdb7b4d65f214eea7339" id="r_a2f57dc8acf31fdb7b4d65f214eea7339"><td class="memItemLeft" align="right" valign="top"><a id="a2f57dc8acf31fdb7b4d65f214eea7339" name="a2f57dc8acf31fdb7b4d65f214eea7339"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>_continuous</b> {false}</td></tr>
+<tr class="separator:a2f57dc8acf31fdb7b4d65f214eea7339"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad0d50c2e62695bdb3044f8a5f4a3cc55" id="r_ad0d50c2e62695bdb3044f8a5f4a3cc55"><td class="memItemLeft" align="right" valign="top"><a id="ad0d50c2e62695bdb3044f8a5f4a3cc55" name="ad0d50c2e62695bdb3044f8a5f4a3cc55"></a>
+types::elapsed_time_t&#160;</td><td class="memItemRight" valign="bottom"><b>_start_ms</b> {0}</td></tr>
+<tr class="separator:ad0d50c2e62695bdb3044f8a5f4a3cc55"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa1c188c265981442d1bde6e4a1f1e307" id="r_aa1c188c265981442d1bde6e4a1f1e307"><td class="memItemLeft" align="right" valign="top"><a id="aa1c188c265981442d1bde6e4a1f1e307" name="aa1c188c265981442d1bde6e4a1f1e307"></a>
+uint32_t&#160;</td><td class="memItemRight" valign="bottom"><b>_duration_ms</b> {0}</td></tr>
+<tr class="separator:aa1c188c265981442d1bde6e4a1f1e307"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>1A flash LED driver controlled via EN-pin pulse protocol </p>
@@ -190,7 +199,7 @@ uint16_t&#160;</td><td class="memItemRight" valign="bottom"><b>_duration_ms</b> 
 <dd>
 Flash mode (S1 = Flash side): use <a class="el" href="#a9fbe0377d974f7a702b9c86b233e43ee" title="Fire a flash with the given brightness for up to FLASH_MAX_DURATION_MS.">flash()</a> to fire short metered pulses (&lt;= 220 ms). Calling <a class="el" href="#a9fbe0377d974f7a702b9c86b233e43ee" title="Fire a flash with the given brightness for up to FLASH_MAX_DURATION_MS.">flash()</a> while S1 is on the Torch side does NOT produce a metered flash; the LED will simply turn on continuously at the chip's Torch current. </dd>
 <dd>
-Torch mode (S1 = Torch side): use <a class="el" href="#a2b80022618f4134797cd9223048be722" title="Drive the LED continuously in Torch mode for up to TORCH_MAX_DURATION_MS.">torch()</a> for steady ~214 mA illumination (&lt;= 1.3 s). Calling <a class="el" href="#a2b80022618f4134797cd9223048be722" title="Drive the LED continuously in Torch mode for up to TORCH_MAX_DURATION_MS.">torch()</a> while S1 is on the Flash side will fire the LED briefly (~220 ms) and then dim due to Flash-mode thermal protection. </dd></dl>
+Torch mode (S1 = Torch side): use <a class="el" href="#af2edd3da84a7c50b50a148893e833ad4" title="Drive the LED in Torch mode for the given duration.">torch()</a> for steady ~214 mA illumination for a given time, or <a class="el" href="#aa620b308ff4c93463f3a748209e685ea" title="Turn the LED on in Torch mode until stop() is called.">torchOn()</a> to keep it on until <a class="el" href="#acf7bee408c3a66796bbe0fc3f01ec47f" title="Stop any in-flight flash or torch, including torchOn() (drives EN LOW immediately)">stop()</a>. Calling <a class="el" href="#af2edd3da84a7c50b50a148893e833ad4" title="Drive the LED in Torch mode for the given duration.">torch()</a> or <a class="el" href="#aa620b308ff4c93463f3a748209e685ea" title="Turn the LED on in Torch mode until stop() is called.">torchOn()</a> while S1 is on the Flash side fires a 100% flash, and after the Flash-mode timeout (T_FLASH 180-310 ms) the LED stays on at a lower current until EN goes LOW. </dd></dl>
 <dl class="section note"><dt>Note</dt><dd>If observed behavior does not match the API, power down the unit and toggle the physical switch on the PCB before retrying. <a class="el" href="structm5_1_1unit_1_1_unit_a_w3641_e_1_1config__t.html#aae5efb676ba7d7194f4c82bda9657e0b" title="Declaration of the physical S1 switch position. The driver cannot detect S1 at runtime; it trusts thi...">config_t::switch_position</a> must match the physical switch. </dd></dl>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a8fd78864cc6b204a0828af57682a60a0" name="a8fd78864cc6b204a0828af57682a60a0"></a>
@@ -251,7 +260,7 @@ Torch mode (S1 = Torch side): use <a class="el" href="#a2b80022618f4134797cd9223
 </div><div class="memdoc">
 
 <p>Is a flash or torch currently in progress? </p>
-<dl class="section return"><dt>Returns</dt><dd>True while <a class="el" href="#a8f872fd1f38f907603685dd2f212b50b" title="Drive EN LOW automatically when the flash/torch duration has elapsed.">update()</a> is still waiting to drive EN LOW </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>True while EN is driven HIGH (until <a class="el" href="#a8f872fd1f38f907603685dd2f212b50b" title="Drive EN LOW automatically when the flash/torch duration has elapsed (not for torchOn())">update()</a> drives it LOW after the duration, or <a class="el" href="#acf7bee408c3a66796bbe0fc3f01ec47f" title="Stop any in-flight flash or torch, including torchOn() (drives EN LOW immediately)">stop()</a> is called) </dd></dl>
 
 </div>
 </div>
@@ -283,8 +292,8 @@ Torch mode (S1 = Torch side): use <a class="el" href="#a2b80022618f4134797cd9223
 
 </div>
 </div>
-<a id="ae421087a609afb1d90e7d2241c2ce0c0" name="ae421087a609afb1d90e7d2241c2ce0c0"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae421087a609afb1d90e7d2241c2ce0c0">&#9670;&#160;</a></span>config() <span class="overload">[1/2]</span></h2>
+<a id="a844d0da849169f1581a74c6e4d61a59c" name="a844d0da849169f1581a74c6e4d61a59c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a844d0da849169f1581a74c6e4d61a59c">&#9670;&#160;</a></span>config() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -296,7 +305,7 @@ Torch mode (S1 = Torch side): use <a class="el" href="#a2b80022618f4134797cd9223
           <td class="memname"><a class="el" href="structm5_1_1unit_1_1_unit_a_w3641_e_1_1config__t.html">config_t</a> m5::unit::UnitAW3641E::config </td>
           <td>(</td>
           <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
-          <td></td>
+          <td> const</td>
         </tr>
       </table>
   </td>
@@ -372,13 +381,13 @@ Torch mode (S1 = Torch side): use <a class="el" href="#a2b80022618f4134797cd9223
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>True on success. False if <a class="el" href="structm5_1_1unit_1_1_unit_a_w3641_e_1_1config__t.html#aae5efb676ba7d7194f4c82bda9657e0b" title="Declaration of the physical S1 switch position. The driver cannot detect S1 at runtime; it trusts thi...">config_t::switch_position</a> is not Flash (logs error), if duration_ms is 0, or if the GPIO write fails. </dd></dl>
-<dl class="section note"><dt>Note</dt><dd>Auto-off depends on periodic Units.update() calls — <a class="el" href="#a8f872fd1f38f907603685dd2f212b50b" title="Drive EN LOW automatically when the flash/torch duration has elapsed.">update()</a> drives EN LOW after duration_ms elapses. The AW3641E also enforces a 220 ms hardware timeout in Flash mode, so the LED turns off even if <a class="el" href="#a8f872fd1f38f907603685dd2f212b50b" title="Drive EN LOW automatically when the flash/torch duration has elapsed.">update()</a> is missed; however, <a class="el" href="#a1a82ec3ee70488d8ba345a8fa18befdf" title="Is a flash or torch currently in progress?">active()</a> remains true until <a class="el" href="#a8f872fd1f38f907603685dd2f212b50b" title="Drive EN LOW automatically when the flash/torch duration has elapsed.">update()</a> runs. If a previous flash/torch is still <a class="el" href="#a1a82ec3ee70488d8ba345a8fa18befdf" title="Is a flash or torch currently in progress?">active()</a>, it is cancelled and the new flash starts after T_OFF (&gt;500 µs). </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Auto-off depends on periodic Units.update() calls — <a class="el" href="#a8f872fd1f38f907603685dd2f212b50b" title="Drive EN LOW automatically when the flash/torch duration has elapsed (not for torchOn())">update()</a> drives EN LOW after duration_ms elapses. The AW3641E ends the flash at its hardware timeout (T_FLASH typ 220 ms, 180-310 ms), but the LED does NOT turn off: while EN stays HIGH it keeps lighting at a lower current. If <a class="el" href="#a8f872fd1f38f907603685dd2f212b50b" title="Drive EN LOW automatically when the flash/torch duration has elapsed (not for torchOn())">update()</a> is not called (blocked task, long delay(), etc.), the LED stays on until <a class="el" href="#acf7bee408c3a66796bbe0fc3f01ec47f" title="Stop any in-flight flash or torch, including torchOn() (drives EN LOW immediately)">stop()</a> is called or power is removed. With duration_ms of 180-220 ms the flash may end before <a class="el" href="#a8f872fd1f38f907603685dd2f212b50b" title="Drive EN LOW automatically when the flash/torch duration has elapsed (not for torchOn())">update()</a> drives EN LOW. If a previous flash/torch is still <a class="el" href="#a1a82ec3ee70488d8ba345a8fa18befdf" title="Is a flash or torch currently in progress?">active()</a>, it is cancelled and the new flash starts after T_OFF (&gt;500 µs). </dd></dl>
 <dl class="section warning"><dt>Warning</dt><dd>Requires <a class="el" href="structm5_1_1unit_1_1_unit_a_w3641_e_1_1config__t.html#aae5efb676ba7d7194f4c82bda9657e0b" title="Declaration of the physical S1 switch position. The driver cannot detect S1 at runtime; it trusts thi...">config_t::switch_position</a> == SwitchPosition::Flash to match the physical S1 switch. </dd></dl>
 
 </div>
 </div>
-<a id="af83c71df6ed60f65725a87dc6fd70a30" name="af83c71df6ed60f65725a87dc6fd70a30"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af83c71df6ed60f65725a87dc6fd70a30">&#9670;&#160;</a></span>lastDurationMs()</h2>
+<a id="a90fa5427296da23232153a30a297c614" name="a90fa5427296da23232153a30a297c614"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a90fa5427296da23232153a30a297c614">&#9670;&#160;</a></span>lastDurationMs()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -387,7 +396,7 @@ Torch mode (S1 = Torch side): use <a class="el" href="#a2b80022618f4134797cd9223
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">uint16_t m5::unit::UnitAW3641E::lastDurationMs </td>
+          <td class="memname">uint32_t m5::unit::UnitAW3641E::lastDurationMs </td>
           <td>(</td>
           <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
           <td> const</td>
@@ -400,42 +409,8 @@ Torch mode (S1 = Torch side): use <a class="el" href="#a2b80022618f4134797cd9223
 </table>
 </div><div class="memdoc">
 
-<p>Last applied on-duration in milliseconds (clamped value used for <a class="el" href="#a9fbe0377d974f7a702b9c86b233e43ee" title="Fire a flash with the given brightness for up to FLASH_MAX_DURATION_MS.">flash()</a> or <a class="el" href="#a2b80022618f4134797cd9223048be722" title="Drive the LED continuously in Torch mode for up to TORCH_MAX_DURATION_MS.">torch()</a>) </p>
-<dl class="section return"><dt>Returns</dt><dd>Duration in milliseconds (after clamping); 0 if no operation has been issued yet </dd></dl>
-
-</div>
-</div>
-<a id="a29af130ee423bc791d3498a2e2e2195e" name="a29af130ee423bc791d3498a2e2e2195e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a29af130ee423bc791d3498a2e2e2195e">&#9670;&#160;</a></span>send_pulse_train()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">bool m5::unit::UnitAW3641E::send_pulse_train </td>
-          <td>(</td>
-          <td class="paramtype">const uint8_t</td>          <td class="paramname"><span class="paramname"><em>pulse_count</em></span></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Send a 1-wire EN pulse train of the given count (1..8 for Brightness Pct100..Pct30) </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">pulse_count</td><td>Number of rising edges (1..8). Final state is EN = HIGH. </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>True if the GPIO writes succeeded. </dd></dl>
+<p>Last applied on-duration in milliseconds (value used for <a class="el" href="#a9fbe0377d974f7a702b9c86b233e43ee" title="Fire a flash with the given brightness for up to FLASH_MAX_DURATION_MS.">flash()</a> or <a class="el" href="#af2edd3da84a7c50b50a148893e833ad4" title="Drive the LED in Torch mode for the given duration.">torch()</a>) </p>
+<dl class="section return"><dt>Returns</dt><dd>Duration in milliseconds (after clamping for <a class="el" href="#a9fbe0377d974f7a702b9c86b233e43ee" title="Fire a flash with the given brightness for up to FLASH_MAX_DURATION_MS.">flash()</a>); 0 if no operation has been issued yet or after <a class="el" href="#aa620b308ff4c93463f3a748209e685ea" title="Turn the LED on in Torch mode until stop() is called.">torchOn()</a> </dd></dl>
 
 </div>
 </div>
@@ -454,13 +429,13 @@ Torch mode (S1 = Torch side): use <a class="el" href="#a2b80022618f4134797cd9223
       </table>
 </div><div class="memdoc">
 
-<p>Stop any in-flight flash or torch (drives EN LOW immediately) </p>
+<p>Stop any in-flight flash or torch, including <a class="el" href="#aa620b308ff4c93463f3a748209e685ea" title="Turn the LED on in Torch mode until stop() is called.">torchOn()</a> (drives EN LOW immediately) </p>
 <dl class="section return"><dt>Returns</dt><dd>True if the GPIO write succeeded; safe to call when idle (no-op success) </dd></dl>
 
 </div>
 </div>
-<a id="a2b80022618f4134797cd9223048be722" name="a2b80022618f4134797cd9223048be722"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a2b80022618f4134797cd9223048be722">&#9670;&#160;</a></span>torch()</h2>
+<a id="af2edd3da84a7c50b50a148893e833ad4" name="af2edd3da84a7c50b50a148893e833ad4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af2edd3da84a7c50b50a148893e833ad4">&#9670;&#160;</a></span>torch()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -468,21 +443,43 @@ Torch mode (S1 = Torch side): use <a class="el" href="#a2b80022618f4134797cd9223
         <tr>
           <td class="memname">bool m5::unit::UnitAW3641E::torch </td>
           <td>(</td>
-          <td class="paramtype">const uint16_t</td>          <td class="paramname"><span class="paramname"><em>duration_ms</em></span><span class="paramdefsep"> = </span><span class="paramdefval"><a class="el" href="unit___a_w3641_e_8hpp.html#abeb94a5d193a58f92f497870901c9f02">aw3641e::TORCH_MAX_DURATION_MS</a></span></td><td>)</td>
+          <td class="paramtype">const uint32_t</td>          <td class="paramname"><span class="paramname"><em>duration_ms</em></span><span class="paramdefsep"> = </span><span class="paramdefval"><a class="el" href="unit___a_w3641_e_8hpp.html#a97609e5e8403ff5dc0b43e2d7f12cb38">aw3641e::TORCH_DEFAULT_DURATION_MS</a></span></td><td>)</td>
           <td></td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p>Drive the LED continuously in Torch mode for up to TORCH_MAX_DURATION_MS. </p>
+<p>Drive the LED in Torch mode for the given duration. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">duration_ms</td><td>Torch duration in milliseconds (default 1300). Clamped to TORCH_MAX_DURATION_MS (1300 ms) with a warning if exceeded. A value of 0 returns false without driving the pin. </td></tr>
+    <tr><td class="paramname">duration_ms</td><td>Torch duration in milliseconds (default TORCH_DEFAULT_DURATION_MS = 1300). A value of 0 returns false without driving the pin. </td></tr>
   </table>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>True on success. False if <a class="el" href="structm5_1_1unit_1_1_unit_a_w3641_e_1_1config__t.html#aae5efb676ba7d7194f4c82bda9657e0b" title="Declaration of the physical S1 switch position. The driver cannot detect S1 at runtime; it trusts thi...">config_t::switch_position</a> is not Torch (logs error), if duration_ms is 0, or if the GPIO write fails. </dd></dl>
-<dl class="section note"><dt>Note</dt><dd>Auto-off is COOPERATIVE — <a class="el" href="#a8f872fd1f38f907603685dd2f212b50b" title="Drive EN LOW automatically when the flash/torch duration has elapsed.">update()</a> drives EN LOW after duration_ms only when the caller runs Units.update() (typically once per loop()). Torch mode has NO hardware timeout: if <a class="el" href="#a8f872fd1f38f907603685dd2f212b50b" title="Drive EN LOW automatically when the flash/torch duration has elapsed.">update()</a> stops being called (blocked task, long delay(), etc.), the LED stays on continuously at ~214 mA until <a class="el" href="#acf7bee408c3a66796bbe0fc3f01ec47f" title="Stop any in-flight flash or torch (drives EN LOW immediately)">stop()</a> is called or power is removed. Call <a class="el" href="#acf7bee408c3a66796bbe0fc3f01ec47f" title="Stop any in-flight flash or torch (drives EN LOW immediately)">stop()</a> explicitly for hard cutoff. If a previous flash/torch is still <a class="el" href="#a1a82ec3ee70488d8ba345a8fa18befdf" title="Is a flash or torch currently in progress?">active()</a>, it is cancelled and the new torch starts. Torch current is fixed at approximately 214 mA; brightness is not adjustable. </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Auto-off is COOPERATIVE — <a class="el" href="#a8f872fd1f38f907603685dd2f212b50b" title="Drive EN LOW automatically when the flash/torch duration has elapsed (not for torchOn())">update()</a> drives EN LOW after duration_ms only when the caller runs Units.update() (typically once per loop()). Torch mode has NO hardware timeout: if <a class="el" href="#a8f872fd1f38f907603685dd2f212b50b" title="Drive EN LOW automatically when the flash/torch duration has elapsed (not for torchOn())">update()</a> stops being called (blocked task, long delay(), etc.), the LED stays on continuously at ~214 mA until <a class="el" href="#acf7bee408c3a66796bbe0fc3f01ec47f" title="Stop any in-flight flash or torch, including torchOn() (drives EN LOW immediately)">stop()</a> is called or power is removed. Call <a class="el" href="#acf7bee408c3a66796bbe0fc3f01ec47f" title="Stop any in-flight flash or torch, including torchOn() (drives EN LOW immediately)">stop()</a> explicitly for hard cutoff. If a previous flash/torch is still <a class="el" href="#a1a82ec3ee70488d8ba345a8fa18befdf" title="Is a flash or torch currently in progress?">active()</a>, it is cancelled and the new torch starts. Torch current is fixed at approximately 214 mA; brightness is not adjustable. </dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>Requires <a class="el" href="structm5_1_1unit_1_1_unit_a_w3641_e_1_1config__t.html#aae5efb676ba7d7194f4c82bda9657e0b" title="Declaration of the physical S1 switch position. The driver cannot detect S1 at runtime; it trusts thi...">config_t::switch_position</a> == SwitchPosition::Torch to match the physical S1 switch. </dd></dl>
+
+</div>
+</div>
+<a id="aa620b308ff4c93463f3a748209e685ea" name="aa620b308ff4c93463f3a748209e685ea"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa620b308ff4c93463f3a748209e685ea">&#9670;&#160;</a></span>torchOn()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool m5::unit::UnitAW3641E::torchOn </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Turn the LED on in Torch mode until <a class="el" href="#acf7bee408c3a66796bbe0fc3f01ec47f" title="Stop any in-flight flash or torch, including torchOn() (drives EN LOW immediately)">stop()</a> is called. </p>
+<dl class="section return"><dt>Returns</dt><dd>True on success. False if <a class="el" href="structm5_1_1unit_1_1_unit_a_w3641_e_1_1config__t.html#aae5efb676ba7d7194f4c82bda9657e0b" title="Declaration of the physical S1 switch position. The driver cannot detect S1 at runtime; it trusts thi...">config_t::switch_position</a> is not Torch (logs error), or if the GPIO write fails. </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>The LED stays on at ~214 mA; <a class="el" href="#a8f872fd1f38f907603685dd2f212b50b" title="Drive EN LOW automatically when the flash/torch duration has elapsed (not for torchOn())">update()</a> does not turn it off. Call <a class="el" href="#acf7bee408c3a66796bbe0fc3f01ec47f" title="Stop any in-flight flash or torch, including torchOn() (drives EN LOW immediately)">stop()</a> to turn it off. Calling <a class="el" href="#aa620b308ff4c93463f3a748209e685ea" title="Turn the LED on in Torch mode until stop() is called.">torchOn()</a> while the LED is already on keeps it on without a break and returns true; for a timed <a class="el" href="#af2edd3da84a7c50b50a148893e833ad4" title="Drive the LED in Torch mode for the given duration.">torch()</a> in progress, its timed turn-off is cancelled. Long continuous operation heats the LED; check the temperature for your use case. </dd></dl>
 <dl class="section warning"><dt>Warning</dt><dd>Requires <a class="el" href="structm5_1_1unit_1_1_unit_a_w3641_e_1_1config__t.html#aae5efb676ba7d7194f4c82bda9657e0b" title="Declaration of the physical S1 switch position. The driver cannot detect S1 at runtime; it trusts thi...">config_t::switch_position</a> == SwitchPosition::Torch to match the physical S1 switch. </dd></dl>
 
 </div>
@@ -510,10 +507,10 @@ Torch mode (S1 = Torch side): use <a class="el" href="#a2b80022618f4134797cd9223
 </table>
 </div><div class="memdoc">
 
-<p>Drive EN LOW automatically when the flash/torch duration has elapsed. </p>
+<p>Drive EN LOW automatically when the flash/torch duration has elapsed (not for <a class="el" href="#aa620b308ff4c93463f3a748209e685ea" title="Turn the LED on in Torch mode until stop() is called.">torchOn()</a>) </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">force</td><td>Currently ignored (kept for API symmetry) </td></tr>
+    <tr><td class="paramname">force</td><td>Ignored </td></tr>
   </table>
   </dd>
 </dl>

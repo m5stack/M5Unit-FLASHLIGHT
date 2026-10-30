@@ -27,7 +27,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">M5Unit-FLASHLIGHT<span id="projectnumber">&#160;0.0.2 git rev:4071dde</span>
+   <div id="projectname">M5Unit-FLASHLIGHT<span id="projectnumber">&#160;0.1.0 git rev:ba3d197</span>
    </div>
   </td>
  </tr>
@@ -162,21 +162,24 @@ Functions</h2></td></tr>
 Variables</h2></td></tr>
 <tr class="memitem:a8e3924238514128da4ee766d5be807f9" id="r_a8e3924238514128da4ee766d5be807f9"><td class="memItemLeft" align="right" valign="top"><a id="a8e3924238514128da4ee766d5be807f9" name="a8e3924238514128da4ee766d5be807f9"></a>
 constexpr uint32_t&#160;</td><td class="memItemRight" valign="bottom"><b>m5::unit::aw3641e::PULSE_HIGH_US</b> {4}</td></tr>
-<tr class="memdesc:a8e3924238514128da4ee766d5be807f9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Minimum logic-high pulse width in microseconds (T_HI; datasheet 0.75-10 µs) <br /></td></tr>
+<tr class="memdesc:a8e3924238514128da4ee766d5be807f9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Logic-high pulse width in microseconds (T_HI; datasheet range 0.75-10 µs) <br /></td></tr>
 <tr class="separator:a8e3924238514128da4ee766d5be807f9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7090cb03a1f70f7f7932a3f44b0d3a4d" id="r_a7090cb03a1f70f7f7932a3f44b0d3a4d"><td class="memItemLeft" align="right" valign="top"><a id="a7090cb03a1f70f7f7932a3f44b0d3a4d" name="a7090cb03a1f70f7f7932a3f44b0d3a4d"></a>
 constexpr uint32_t&#160;</td><td class="memItemRight" valign="bottom"><b>m5::unit::aw3641e::PULSE_LOW_US</b> {4}</td></tr>
-<tr class="memdesc:a7090cb03a1f70f7f7932a3f44b0d3a4d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Minimum logic-low pulse width in microseconds (T_LO; datasheet 0.75-10 µs) <br /></td></tr>
+<tr class="memdesc:a7090cb03a1f70f7f7932a3f44b0d3a4d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Logic-low pulse width in microseconds (T_LO; datasheet range 0.75-10 µs) <br /></td></tr>
 <tr class="separator:a7090cb03a1f70f7f7932a3f44b0d3a4d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac84d0dcd7195ab142655a2b7b908caee" id="r_ac84d0dcd7195ab142655a2b7b908caee"><td class="memItemLeft" align="right" valign="top"><a id="ac84d0dcd7195ab142655a2b7b908caee" name="ac84d0dcd7195ab142655a2b7b908caee"></a>
 constexpr uint32_t&#160;</td><td class="memItemRight" valign="bottom"><b>m5::unit::aw3641e::PULSE_OFF_US</b> {600}</td></tr>
-<tr class="memdesc:ac84d0dcd7195ab142655a2b7b908caee"><td class="mdescLeft">&#160;</td><td class="mdescRight">Minimum EN-low delay required before a pulse sequence (T_OFF; datasheet &gt; 500 µs) <br /></td></tr>
+<tr class="memdesc:ac84d0dcd7195ab142655a2b7b908caee"><td class="mdescLeft">&#160;</td><td class="mdescRight">EN-low time before a pulse sequence in microseconds (T_OFF; datasheet &gt; 500 µs) <br /></td></tr>
 <tr class="separator:ac84d0dcd7195ab142655a2b7b908caee"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad361e890de16c4e85a68a00cbc3a822f" id="r_ad361e890de16c4e85a68a00cbc3a822f"><td class="memItemLeft" align="right" valign="top">constexpr uint16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad361e890de16c4e85a68a00cbc3a822f">m5::unit::aw3641e::FLASH_MAX_DURATION_MS</a> {220}</td></tr>
 <tr class="memdesc:ad361e890de16c4e85a68a00cbc3a822f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Maximum duration for a single flash() call in milliseconds.  <br /></td></tr>
 <tr class="separator:ad361e890de16c4e85a68a00cbc3a822f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a97609e5e8403ff5dc0b43e2d7f12cb38" id="r_a97609e5e8403ff5dc0b43e2d7f12cb38"><td class="memItemLeft" align="right" valign="top">constexpr uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a97609e5e8403ff5dc0b43e2d7f12cb38">m5::unit::aw3641e::TORCH_DEFAULT_DURATION_MS</a> {1300}</td></tr>
+<tr class="memdesc:a97609e5e8403ff5dc0b43e2d7f12cb38"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default torch() duration in milliseconds (used when torch() is called with no argument)  <br /></td></tr>
+<tr class="separator:a97609e5e8403ff5dc0b43e2d7f12cb38"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abeb94a5d193a58f92f497870901c9f02" id="r_abeb94a5d193a58f92f497870901c9f02"><td class="memItemLeft" align="right" valign="top">constexpr uint16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#abeb94a5d193a58f92f497870901c9f02">m5::unit::aw3641e::TORCH_MAX_DURATION_MS</a> {1300}</td></tr>
-<tr class="memdesc:abeb94a5d193a58f92f497870901c9f02"><td class="mdescLeft">&#160;</td><td class="mdescRight">Maximum duration for a single torch() call in milliseconds.  <br /></td></tr>
+<tr class="memdesc:abeb94a5d193a58f92f497870901c9f02"><td class="mdescLeft">&#160;</td><td class="mdescRight">Alias for TORCH_DEFAULT_DURATION_MS (torch() does not clamp the duration; this is only the default)  <br /></td></tr>
 <tr class="separator:abeb94a5d193a58f92f497870901c9f02"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
@@ -289,7 +292,7 @@ constexpr uint32_t&#160;</td><td class="memItemRight" valign="bottom"><b>m5::uni
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Pulse count in range 1..8 (Pulse 1 = 100% / 220 ms, Pulse 8 = 30% / 220 ms) </dd></dl>
-<dl class="section note"><dt>Note</dt><dd>Only Pulse 1-8 (Ms220 timeout) is exposed by this library; the chip's Pulse 9-16 (1.3 s timeout) range is not used because thermal protection causes the LED to dim before the timeout expires at higher currents. </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Only Pulse 1-8 (220 ms hardware timeout) is exposed by this library; the chip's Pulse 9-16 (1.3 s timeout) range is not used. For an on-time longer than 220 ms use torch(). </dd></dl>
 
 </div>
 </div>
@@ -315,7 +318,32 @@ constexpr uint32_t&#160;</td><td class="memItemRight" valign="bottom"><b>m5::uni
 </div><div class="memdoc">
 
 <p>Maximum duration for a single flash() call in milliseconds. </p>
-<dl class="section note"><dt>Note</dt><dd>Matches the AW3641E Flash mode hardware timeout for Pulse 1-8 (220 ms). For longer continuous on-time use torch() instead. </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Matches the AW3641E Flash mode hardware timeout for Pulse 1-8 (T_FLASH typ 220 ms, 180-310 ms), after which the chip lowers the LED current but does not turn it off. For longer continuous on-time use torch() instead. </dd></dl>
+
+</div>
+</div>
+<a id="a97609e5e8403ff5dc0b43e2d7f12cb38" name="a97609e5e8403ff5dc0b43e2d7f12cb38"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a97609e5e8403ff5dc0b43e2d7f12cb38">&#9670;&#160;</a></span>TORCH_DEFAULT_DURATION_MS</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint32_t m5::unit::aw3641e::TORCH_DEFAULT_DURATION_MS {1300}</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">constexpr</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Default torch() duration in milliseconds (used when torch() is called with no argument) </p>
+<dl class="section note"><dt>Note</dt><dd>A value chosen by this library, not a chip limit: Torch mode has no hardware timeout and ~214 mA is within the chip's continuous rating (0.4 A). Use torchOn() to keep the LED on until stop(). </dd></dl>
 
 </div>
 </div>
@@ -339,8 +367,8 @@ constexpr uint32_t&#160;</td><td class="memItemRight" valign="bottom"><b>m5::uni
 </table>
 </div><div class="memdoc">
 
-<p>Maximum duration for a single torch() call in milliseconds. </p>
-<dl class="section note"><dt>Note</dt><dd>Library-side safety cap — but auto-shutdown at this duration still requires the caller to run Units.update() periodically. Torch mode itself has no hardware time limit (EN=HIGH continuously drives ~214 mA); the driver clamps the requested duration but cannot enforce it without update() calls. Use stop() for guaranteed cutoff. </dd></dl>
+<p>Alias for TORCH_DEFAULT_DURATION_MS (torch() does not clamp the duration; this is only the default) </p>
+<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000001">Deprecated</a></b></dt><dd>Use TORCH_DEFAULT_DURATION_MS instead </dd></dl>
 
 </div>
 </div>

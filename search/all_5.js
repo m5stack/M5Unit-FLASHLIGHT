@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['m5_0',['m5',['../namespacem5.html',1,'']]],
-  ['m5unitunifiedflashlight_2ehpp_1',['M5UnitUnifiedFLASHLIGHT.hpp',['../_m5_unit_unified_f_l_a_s_h_l_i_g_h_t_8hpp.html',1,'']]]
+  ['lastdurationms_0',['lastDurationMs',['../classm5_1_1unit_1_1_unit_a_w3641_e.html#a90fa5427296da23232153a30a297c614',1,'m5::unit::UnitAW3641E']]],
+  ['list_1',['Deprecated List',['../deprecated.html',1,'']]]
 ];
